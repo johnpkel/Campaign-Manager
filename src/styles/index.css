@@ -1,0 +1,11 @@
+/*
+ * Main stylesheet entry point
+ * Venus components CSS must be imported first to ensure @import statements
+ * are processed before any other CSS rules
+ */
+
+/* Import Venus components - this contains @import statements that must come first */
+@import '@contentstack/venus-components/build/main.css';
+
+/* Import our global styles after Venus */
+@import './global.css';

@@ -1,6 +1,5 @@
-import React, { Suspense, lazy } from 'react';
+import { Suspense, lazy } from 'react';
 import { AppSdkProvider, CampaignProvider, useAppSdk } from './contexts';
-import { LocationType } from './types';
 import styles from './App.module.css';
 
 const FullPageLocation = lazy(() =>

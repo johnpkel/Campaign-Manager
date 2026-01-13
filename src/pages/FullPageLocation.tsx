@@ -1,9 +1,8 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { Icon, cbModal, ModalHeader, ModalBody } from '@contentstack/venus-components';
 import { CampaignList, CampaignForm, MetricsCard } from '../components';
 import { useCampaigns } from '../contexts';
 import { Campaign, CampaignFormData } from '../types';
-import { formatCurrency } from '../utils';
 import styles from './FullPageLocation.module.css';
 
 type View = 'list' | 'create' | 'edit';
@@ -12,11 +11,6 @@ export function FullPageLocation() {
   const { metrics, addCampaign, updateCampaign } = useCampaigns();
   const [currentView, setCurrentView] = useState<View>('list');
   const [editingCampaign, setEditingCampaign] = useState<Campaign | null>(null);
-
-  const budgetUtilization =
-    metrics.totalBudget > 0
-      ? Math.round((metrics.totalSpent / metrics.totalBudget) * 100)
-      : 0;
 
   const handleCreate = useCallback(() => {
     setEditingCampaign(null);
@@ -29,36 +23,50 @@ export function FullPageLocation() {
   }, []);
 
   const handleFormSubmit = useCallback(
-    (data: CampaignFormData) => {
-      if (editingCampaign) {
-        updateCampaign(editingCampaign.id, data);
+    async (data: CampaignFormData) => {
+      try {
+        if (editingCampaign) {
+          await updateCampaign(editingCampaign.uid, data);
+          cbModal({
+            component: (props: { closeModal: () => void }) => (
+              <div>
+                <ModalHeader title="Success" closeModal={props.closeModal} />
+                <ModalBody>
+                  <p>Campaign updated successfully!</p>
+                </ModalBody>
+              </div>
+            ),
+            modalProps: { size: 'small' },
+          });
+        } else {
+          await addCampaign(data);
+          cbModal({
+            component: (props: { closeModal: () => void }) => (
+              <div>
+                <ModalHeader title="Success" closeModal={props.closeModal} />
+                <ModalBody>
+                  <p>Campaign created successfully!</p>
+                </ModalBody>
+              </div>
+            ),
+            modalProps: { size: 'small' },
+          });
+        }
+        setCurrentView('list');
+        setEditingCampaign(null);
+      } catch (error) {
         cbModal({
           component: (props: { closeModal: () => void }) => (
             <div>
-              <ModalHeader title="Success" closeModal={props.closeModal} />
+              <ModalHeader title="Error" closeModal={props.closeModal} />
               <ModalBody>
-                <p>Campaign updated successfully!</p>
-              </ModalBody>
-            </div>
-          ),
-          modalProps: { size: 'small' },
-        });
-      } else {
-        addCampaign(data);
-        cbModal({
-          component: (props: { closeModal: () => void }) => (
-            <div>
-              <ModalHeader title="Success" closeModal={props.closeModal} />
-              <ModalBody>
-                <p>Campaign created successfully!</p>
+                <p>Failed to save campaign. Please try again.</p>
               </ModalBody>
             </div>
           ),
           modalProps: { size: 'small' },
         });
       }
-      setCurrentView('list');
-      setEditingCampaign(null);
     },
     [editingCampaign, addCampaign, updateCampaign]
   );
@@ -103,17 +111,16 @@ export function FullPageLocation() {
             color="#10b981"
           />
           <MetricsCard
-            title="Total Budget"
-            value={formatCurrency(metrics.totalBudget)}
-            icon="CreditCard"
+            title="Paused"
+            value={metrics.campaignsByStatus.paused}
+            icon="Pause"
             color="#f59e0b"
           />
           <MetricsCard
-            title="Spent"
-            value={formatCurrency(metrics.totalSpent)}
-            icon="TrendingUp"
+            title="Completed"
+            value={metrics.campaignsByStatus.completed}
+            icon="CheckCircle"
             color="#8b5cf6"
-            subtitle={`${budgetUtilization}% utilized`}
           />
         </div>
       )}

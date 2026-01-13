@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Button,
   Icon,
@@ -17,8 +17,9 @@ import {
   CampaignStatus,
   CAMPAIGN_STATUS_LABELS,
   CAMPAIGN_CHANNEL_LABELS,
+  ALL_CAMPAIGN_STATUSES,
 } from '../types';
-import { formatCurrency, formatDate, getStatusColor } from '../utils';
+import { formatDate, getStatusColor } from '../utils';
 import styles from './CampaignList.module.css';
 
 interface CampaignListProps {
@@ -26,12 +27,15 @@ interface CampaignListProps {
   onCreate: () => void;
 }
 
+type SortableField = 'title' | 'status' | 'start_date' | 'end_date' | 'updated_at';
+
 export function CampaignList({ onEdit, onCreate }: CampaignListProps) {
-  const { campaigns, deleteCampaign } = useCampaigns();
+  const { campaigns, deleteCampaign, isLoading, error } = useCampaigns();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<CampaignStatus | 'all'>('all');
-  const [sortField, setSortField] = useState<keyof Campaign>('updatedAt');
+  const [sortField, setSortField] = useState<SortableField>('updated_at');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+  const [isDeleting, setIsDeleting] = useState<string | null>(null);
 
   const filteredCampaigns = useMemo(() => {
     let filtered = [...campaigns];
@@ -39,12 +43,8 @@ export function CampaignList({ onEdit, onCreate }: CampaignListProps) {
     // Apply search filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(
-        (campaign) =>
-          campaign.name.toLowerCase().includes(query) ||
-          campaign.description.toLowerCase().includes(query) ||
-          campaign.owner.toLowerCase().includes(query) ||
-          campaign.tags.some((tag) => tag.toLowerCase().includes(query))
+      filtered = filtered.filter((campaign) =>
+        campaign.title.toLowerCase().includes(query)
       );
     }
 
@@ -64,17 +64,13 @@ export function CampaignList({ onEdit, onCreate }: CampaignListProps) {
           : bValue.localeCompare(aValue);
       }
 
-      if (typeof aValue === 'number' && typeof bValue === 'number') {
-        return sortDirection === 'asc' ? aValue - bValue : bValue - aValue;
-      }
-
       return 0;
     });
 
     return filtered;
   }, [campaigns, searchQuery, statusFilter, sortField, sortDirection]);
 
-  const handleSort = (field: keyof Campaign) => {
+  const handleSort = (field: SortableField) => {
     if (sortField === field) {
       setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
     } else {
@@ -90,7 +86,7 @@ export function CampaignList({ onEdit, onCreate }: CampaignListProps) {
           <ModalHeader title="Delete Campaign" closeModal={props.closeModal} />
           <ModalBody>
             <p>
-              Are you sure you want to delete <strong>{campaign.name}</strong>? This action
+              Are you sure you want to delete <strong>{campaign.title}</strong>? This action
               cannot be undone.
             </p>
           </ModalBody>
@@ -101,8 +97,13 @@ export function CampaignList({ onEdit, onCreate }: CampaignListProps) {
               </Button>
               <Button
                 buttonType="delete"
-                onClick={() => {
-                  deleteCampaign(campaign.id);
+                onClick={async () => {
+                  setIsDeleting(campaign.uid);
+                  try {
+                    await deleteCampaign(campaign.uid);
+                  } finally {
+                    setIsDeleting(null);
+                  }
                   props.closeModal();
                 }}
               >
@@ -118,16 +119,38 @@ export function CampaignList({ onEdit, onCreate }: CampaignListProps) {
 
   const statusOptions = [
     { label: 'All Statuses', value: 'all' },
-    ...Object.entries(CAMPAIGN_STATUS_LABELS).map(([value, label]) => ({
-      label,
-      value,
+    ...ALL_CAMPAIGN_STATUSES.map((status) => ({
+      label: CAMPAIGN_STATUS_LABELS[status],
+      value: status,
     })),
   ];
 
-  const getSortIcon = (field: keyof Campaign) => {
+  const getSortIcon = (field: SortableField) => {
     if (sortField !== field) return null;
     return sortDirection === 'asc' ? 'SortAscending' : 'SortDescending';
   };
+
+  if (isLoading) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.loading}>
+          <div className={styles.spinner} />
+          <p>Loading campaigns...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.error}>
+          <Icon icon="Warning" size="large" />
+          <p>{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>
@@ -163,41 +186,33 @@ export function CampaignList({ onEdit, onCreate }: CampaignListProps) {
         <table className={styles.table}>
           <thead>
             <tr>
-              <th onClick={() => handleSort('name')} className={styles.sortable}>
-                Campaign Name
-                {getSortIcon('name') && <Icon icon={getSortIcon('name')!} size="small" />}
+              <th onClick={() => handleSort('title')} className={styles.sortable}>
+                Campaign Title
+                {getSortIcon('title') && <Icon icon={getSortIcon('title')!} size="small" />}
               </th>
               <th onClick={() => handleSort('status')} className={styles.sortable}>
                 Status
                 {getSortIcon('status') && <Icon icon={getSortIcon('status')!} size="small" />}
               </th>
               <th>Channels</th>
-              <th onClick={() => handleSort('budget')} className={styles.sortable}>
-                Budget
-                {getSortIcon('budget') && <Icon icon={getSortIcon('budget')!} size="small" />}
-              </th>
-              <th onClick={() => handleSort('spent')} className={styles.sortable}>
-                Spent
-                {getSortIcon('spent') && <Icon icon={getSortIcon('spent')!} size="small" />}
-              </th>
-              <th onClick={() => handleSort('startDate')} className={styles.sortable}>
+              <th>Budget</th>
+              <th onClick={() => handleSort('start_date')} className={styles.sortable}>
                 Start Date
-                {getSortIcon('startDate') && (
-                  <Icon icon={getSortIcon('startDate')!} size="small" />
+                {getSortIcon('start_date') && (
+                  <Icon icon={getSortIcon('start_date')!} size="small" />
                 )}
               </th>
-              <th onClick={() => handleSort('endDate')} className={styles.sortable}>
+              <th onClick={() => handleSort('end_date')} className={styles.sortable}>
                 End Date
-                {getSortIcon('endDate') && <Icon icon={getSortIcon('endDate')!} size="small" />}
+                {getSortIcon('end_date') && <Icon icon={getSortIcon('end_date')!} size="small" />}
               </th>
-              <th>Owner</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {filteredCampaigns.length === 0 ? (
               <tr>
-                <td colSpan={9} className={styles.emptyState}>
+                <td colSpan={7} className={styles.emptyState}>
                   <div className={styles.emptyContent}>
                     <Icon icon="Folder" size="large" />
                     <p>No campaigns found</p>
@@ -221,11 +236,10 @@ export function CampaignList({ onEdit, onCreate }: CampaignListProps) {
               </tr>
             ) : (
               filteredCampaigns.map((campaign) => (
-                <tr key={campaign.id}>
+                <tr key={campaign.uid}>
                   <td>
                     <div className={styles.campaignName}>
-                      <strong>{campaign.name}</strong>
-                      <span className={styles.description}>{campaign.description}</span>
+                      <strong>{campaign.title}</strong>
                     </div>
                   </td>
                   <td>
@@ -239,46 +253,33 @@ export function CampaignList({ onEdit, onCreate }: CampaignListProps) {
                   <td>
                     <div className={styles.channels}>
                       {campaign.channels.map((channel) => (
-                        <Tooltip key={channel} content={CAMPAIGN_CHANNEL_LABELS[channel]}>
-                          <span className={styles.channel}>{channel.toUpperCase()}</span>
+                        <Tooltip key={channel} content={CAMPAIGN_CHANNEL_LABELS[channel]} position="top">
+                          <span className={styles.channel}>
+                            {channel === 'Native Mobile' ? 'MOBILE' : channel.toUpperCase()}
+                          </span>
                         </Tooltip>
                       ))}
                     </div>
                   </td>
-                  <td>{formatCurrency(campaign.budget)}</td>
-                  <td>
-                    <div className={styles.spent}>
-                      {formatCurrency(campaign.spent)}
-                      <div className={styles.progressBar}>
-                        <div
-                          className={styles.progress}
-                          style={{
-                            width: `${Math.min(
-                              (campaign.spent / campaign.budget) * 100,
-                              100
-                            )}%`,
-                          }}
-                        />
-                      </div>
-                    </div>
-                  </td>
-                  <td>{formatDate(campaign.startDate)}</td>
-                  <td>{formatDate(campaign.endDate)}</td>
-                  <td>{campaign.owner}</td>
+                  <td>{campaign.budget || '-'}</td>
+                  <td>{formatDate(campaign.start_date)}</td>
+                  <td>{formatDate(campaign.end_date)}</td>
                   <td>
                     <div className={styles.actions}>
-                      <Tooltip content="Edit">
+                      <Tooltip content="Edit" position="top">
                         <Button
                           buttonType="tertiary"
                           icon="Edit"
                           onClick={() => onEdit(campaign)}
+                          disabled={isDeleting === campaign.uid}
                         />
                       </Tooltip>
-                      <Tooltip content="Delete">
+                      <Tooltip content="Delete" position="top">
                         <Button
                           buttonType="tertiary"
                           icon="Delete"
                           onClick={() => handleDelete(campaign)}
+                          disabled={isDeleting === campaign.uid}
                         />
                       </Tooltip>
                     </div>

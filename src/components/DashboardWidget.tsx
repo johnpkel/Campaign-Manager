@@ -1,4 +1,3 @@
-import React from 'react';
 import { Button, Icon } from '@contentstack/venus-components';
 import { useCampaigns } from '../contexts';
 import { MetricsCard } from './MetricsCard';
@@ -7,19 +6,25 @@ import {
   CAMPAIGN_STATUS_COLORS,
   CampaignStatus,
 } from '../types';
-import { formatCurrency } from '../utils';
 import styles from './DashboardWidget.module.css';
 
 export function DashboardWidget() {
-  const { campaigns, metrics } = useCampaigns();
+  const { campaigns, metrics, isLoading } = useCampaigns();
 
   const recentCampaigns = [...campaigns]
-    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+    .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
     .slice(0, 5);
 
-  const budgetUtilization = metrics.totalBudget > 0
-    ? Math.round((metrics.totalSpent / metrics.totalBudget) * 100)
-    : 0;
+  if (isLoading) {
+    return (
+      <div className={styles.widget}>
+        <div className={styles.loading}>
+          <div className={styles.spinner} />
+          <p>Loading campaigns...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.widget}>
@@ -45,26 +50,25 @@ export function DashboardWidget() {
           subtitle="All campaigns"
         />
         <MetricsCard
-          title="Active Campaigns"
+          title="Active"
           value={metrics.activeCampaigns}
           icon="Play"
           color="#10b981"
-          trend={{ value: 12, isPositive: true }}
           subtitle="Currently running"
         />
         <MetricsCard
-          title="Total Budget"
-          value={formatCurrency(metrics.totalBudget)}
-          icon="CreditCard"
+          title="Paused"
+          value={metrics.campaignsByStatus.paused}
+          icon="Pause"
           color="#f59e0b"
-          subtitle="Allocated budget"
+          subtitle="On hold"
         />
         <MetricsCard
-          title="Budget Used"
-          value={`${budgetUtilization}%`}
-          icon="TrendingUp"
+          title="Completed"
+          value={metrics.campaignsByStatus.completed}
+          icon="CheckCircle"
           color="#8b5cf6"
-          subtitle={`${formatCurrency(metrics.totalSpent)} spent`}
+          subtitle="Finished"
         />
       </div>
 
@@ -104,11 +108,11 @@ export function DashboardWidget() {
           <h3 className={styles.sectionTitle}>Recent Activity</h3>
           <div className={styles.recentList}>
             {recentCampaigns.map((campaign) => (
-              <div key={campaign.id} className={styles.recentItem}>
+              <div key={campaign.uid} className={styles.recentItem}>
                 <div className={styles.recentInfo}>
-                  <span className={styles.recentName}>{campaign.name}</span>
+                  <span className={styles.recentName}>{campaign.title}</span>
                   <span className={styles.recentMeta}>
-                    {campaign.owner} &bull; {new Date(campaign.updatedAt).toLocaleDateString()}
+                    {new Date(campaign.updated_at).toLocaleDateString()}
                   </span>
                 </div>
                 <span

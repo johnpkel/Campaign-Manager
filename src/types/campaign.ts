@@ -1,65 +1,98 @@
-export type CampaignStatus = 'draft' | 'scheduled' | 'active' | 'paused' | 'completed';
+export type CampaignStatus = 'active' | 'paused' | 'completed';
 
-export type CampaignChannel = 'email' | 'social' | 'ppc' | 'display' | 'content' | 'seo';
+export type CampaignChannel = 'Web' | 'Native Mobile' | 'Social' | 'Ads' | 'Email';
 
-export interface Campaign {
-  id: string;
-  name: string;
-  description: string;
-  status: CampaignStatus;
-  channels: CampaignChannel[];
-  startDate: string;
-  endDate: string;
-  budget: number;
-  spent: number;
-  owner: string;
-  tags: string[];
-  createdAt: string;
-  updatedAt: string;
+// JSON RTE content structure (Contentstack's JSON RTE format)
+export interface RTENode {
+  type: string;
+  attrs?: Record<string, unknown>;
+  uid?: string;
+  text?: string;
+  children?: RTENode[];
 }
 
-export interface CampaignFormData {
-  name: string;
-  description: string;
+export interface RTEContent {
+  type: string;
+  attrs?: Record<string, unknown>;
+  uid: string;
+  children: RTENode[];
+}
+
+// Reference field structure for Contributors
+export interface ContributorReference {
+  uid: string;
+  _content_type_uid: string;
+}
+
+// Asset reference structure
+export interface AssetReference {
+  uid: string;
+  url: string;
+  filename: string;
+  content_type: string;
+}
+
+// Main Campaign interface matching Contentstack entry structure
+export interface Campaign {
+  uid: string;
+  title: string;
+  key_messages?: RTEContent;
+  campaign_goals?: RTEContent;
+  start_date: string;
+  end_date: string;
+  contributors?: ContributorReference[];
+  budget?: string;
   status: CampaignStatus;
   channels: CampaignChannel[];
-  startDate: string;
-  endDate: string;
-  budget: number;
-  owner: string;
-  tags: string[];
+  assets?: AssetReference[];
+  created_at: string;
+  updated_at: string;
+  created_by: string;
+  updated_by: string;
+  locale: string;
+}
+
+// Form data for creating/editing campaigns
+export interface CampaignFormData {
+  title: string;
+  key_messages?: RTEContent;
+  campaign_goals?: RTEContent;
+  start_date: string;
+  end_date: string;
+  contributors?: ContributorReference[];
+  budget?: string;
+  status: CampaignStatus;
+  channels: CampaignChannel[];
+  assets?: AssetReference[];
 }
 
 export interface CampaignMetrics {
   totalCampaigns: number;
   activeCampaigns: number;
-  totalBudget: number;
-  totalSpent: number;
   campaignsByStatus: Record<CampaignStatus, number>;
   campaignsByChannel: Record<CampaignChannel, number>;
 }
 
 export const CAMPAIGN_STATUS_LABELS: Record<CampaignStatus, string> = {
-  draft: 'Draft',
-  scheduled: 'Scheduled',
   active: 'Active',
   paused: 'Paused',
   completed: 'Completed',
 };
 
 export const CAMPAIGN_CHANNEL_LABELS: Record<CampaignChannel, string> = {
-  email: 'Email',
-  social: 'Social Media',
-  ppc: 'PPC',
-  display: 'Display Ads',
-  content: 'Content',
-  seo: 'SEO',
+  'Web': 'Web',
+  'Native Mobile': 'Native Mobile',
+  'Social': 'Social',
+  'Ads': 'Ads',
+  'Email': 'Email',
 };
 
 export const CAMPAIGN_STATUS_COLORS: Record<CampaignStatus, string> = {
-  draft: '#718096',
-  scheduled: '#3182CE',
   active: '#38A169',
   paused: '#DD6B20',
   completed: '#805AD5',
 };
+
+export const ALL_CAMPAIGN_STATUSES: CampaignStatus[] = ['active', 'paused', 'completed'];
+
+export const ALL_CAMPAIGN_CHANNELS: CampaignChannel[] = ['Web', 'Native Mobile', 'Social', 'Ads', 'Email'];

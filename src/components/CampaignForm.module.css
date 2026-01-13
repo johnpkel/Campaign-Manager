@@ -109,6 +109,13 @@
   color: #334155;
 }
 
+.placeholder {
+  padding: 16px;
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+}
+
 .footer {
   padding: 16px 24px;
   border-top: 1px solid #e8e8e8;

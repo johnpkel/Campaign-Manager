@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import ContentstackAppSdk from '@contentstack/app-sdk';
 import { AppConfig, DEFAULT_APP_CONFIG, LocationType } from '../types';
 
@@ -12,12 +12,14 @@ const isInsideContentstack = (): boolean => {
 };
 
 interface AppSdkContextValue {
-  sdk: typeof ContentstackAppSdk | null;
+  sdk: any | null;
+  stack: any | null;
   location: LocationType | null;
   config: AppConfig;
   isLoading: boolean;
   error: string | null;
   isStandaloneMode: boolean;
+  locale: string;
   setConfig: (config: AppConfig) => Promise<void>;
 }
 
@@ -28,12 +30,14 @@ interface AppSdkProviderProps {
 }
 
 export function AppSdkProvider({ children }: AppSdkProviderProps) {
-  const [sdk, setSdk] = useState<typeof ContentstackAppSdk | null>(null);
+  const [sdk, setSdk] = useState<any | null>(null);
+  const [stack, setStack] = useState<any | null>(null);
   const [location, setLocation] = useState<LocationType | null>(null);
   const [config, setConfigState] = useState<AppConfig>(DEFAULT_APP_CONFIG);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error] = useState<string | null>(null);
   const [isStandaloneMode, setIsStandaloneMode] = useState(false);
+  const [locale, setLocale] = useState<string>('en-us');
 
   useEffect(() => {
     const initSdk = async () => {
@@ -50,9 +54,18 @@ export function AppSdkProvider({ children }: AppSdkProviderProps) {
         const appSdk = await ContentstackAppSdk.init();
         setSdk(appSdk);
 
+        // Get stack reference for entry operations
+        const stackInstance = (appSdk as any).stack;
+        setStack(stackInstance);
+
         // Get current location
-        const currentLocation = appSdk.location?.type as LocationType;
+        const locationObj = appSdk.location as any;
+        const currentLocation = locationObj?.type as LocationType;
         setLocation(currentLocation);
+
+        // Get current locale if available
+        const currentLocale = locationObj?.locale || 'en-us';
+        setLocale(currentLocale);
 
         // Get app configuration
         const appConfig = await appSdk.getConfig();
@@ -90,11 +103,13 @@ export function AppSdkProvider({ children }: AppSdkProviderProps) {
     <AppSdkContext.Provider
       value={{
         sdk,
+        stack,
         location,
         config,
         isLoading,
         error,
         isStandaloneMode,
+        locale,
         setConfig,
       }}
     >

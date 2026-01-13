@@ -1,4 +1,3 @@
-import React from 'react';
 import { Icon } from '@contentstack/venus-components';
 import styles from './MetricsCard.module.css';
 

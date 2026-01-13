@@ -10,14 +10,17 @@ import {
   Field,
   FieldLabel,
   Help,
+  InstructionText,
 } from '@contentstack/venus-components';
 import {
   Campaign,
   CampaignFormData,
   CampaignStatus,
   CampaignChannel,
+  RTEContent,
   CAMPAIGN_STATUS_LABELS,
   CAMPAIGN_CHANNEL_LABELS,
+  ALL_CAMPAIGN_CHANNELS,
 } from '../types';
 import styles from './CampaignForm.module.css';
 
@@ -27,74 +30,98 @@ interface CampaignFormProps {
   onCancel: () => void;
 }
 
+// Helper to extract plain text from RTE content
+function getRTEPlainText(rte?: RTEContent): string {
+  if (!rte || !rte.children) return '';
+  const extractText = (nodes: any[]): string => {
+    return nodes
+      .map((node) => {
+        if (node.text) return node.text;
+        if (node.children) return extractText(node.children);
+        return '';
+      })
+      .join('');
+  };
+  return extractText(rte.children);
+}
+
+// Helper to create RTE content from plain text
+function createRTEFromText(text: string): RTEContent | undefined {
+  if (!text.trim()) return undefined;
+  return {
+    type: 'doc',
+    uid: `rte_${Math.random().toString(36).slice(2, 9)}`,
+    children: [
+      {
+        type: 'p',
+        uid: `p_${Math.random().toString(36).slice(2, 9)}`,
+        children: [{ type: 'text', text }],
+      },
+    ],
+  };
+}
+
 const INITIAL_FORM_DATA: CampaignFormData = {
-  name: '',
-  description: '',
-  status: 'draft',
+  title: '',
+  key_messages: undefined,
+  campaign_goals: undefined,
+  status: 'active',
   channels: [],
-  startDate: '',
-  endDate: '',
-  budget: 0,
-  owner: '',
-  tags: [],
+  start_date: '',
+  end_date: '',
+  budget: '',
+  contributors: [],
+  assets: [],
 };
 
 export function CampaignForm({ campaign, onSubmit, onCancel }: CampaignFormProps) {
   const [formData, setFormData] = useState<CampaignFormData>(INITIAL_FORM_DATA);
+  const [keyMessagesText, setKeyMessagesText] = useState('');
+  const [campaignGoalsText, setCampaignGoalsText] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [tagInput, setTagInput] = useState('');
 
   const isEditing = Boolean(campaign);
 
   useEffect(() => {
     if (campaign) {
       setFormData({
-        name: campaign.name,
-        description: campaign.description,
+        title: campaign.title,
+        key_messages: campaign.key_messages,
+        campaign_goals: campaign.campaign_goals,
         status: campaign.status,
         channels: campaign.channels,
-        startDate: campaign.startDate,
-        endDate: campaign.endDate,
-        budget: campaign.budget,
-        owner: campaign.owner,
-        tags: campaign.tags,
+        start_date: campaign.start_date,
+        end_date: campaign.end_date,
+        budget: campaign.budget || '',
+        contributors: campaign.contributors || [],
+        assets: campaign.assets || [],
       });
+      setKeyMessagesText(getRTEPlainText(campaign.key_messages));
+      setCampaignGoalsText(getRTEPlainText(campaign.campaign_goals));
     }
   }, [campaign]);
 
   const validate = (): boolean => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.name.trim()) {
-      newErrors.name = 'Campaign name is required';
-    }
-
-    if (!formData.description.trim()) {
-      newErrors.description = 'Description is required';
+    if (!formData.title.trim()) {
+      newErrors.title = 'Campaign title is required';
     }
 
     if (formData.channels.length === 0) {
       newErrors.channels = 'At least one channel is required';
     }
 
-    if (!formData.startDate) {
-      newErrors.startDate = 'Start date is required';
+    if (!formData.start_date) {
+      newErrors.start_date = 'Start date is required';
     }
 
-    if (!formData.endDate) {
-      newErrors.endDate = 'End date is required';
+    if (!formData.end_date) {
+      newErrors.end_date = 'End date is required';
     }
 
-    if (formData.startDate && formData.endDate && formData.startDate > formData.endDate) {
-      newErrors.endDate = 'End date must be after start date';
-    }
-
-    if (formData.budget <= 0) {
-      newErrors.budget = 'Budget must be greater than 0';
-    }
-
-    if (!formData.owner.trim()) {
-      newErrors.owner = 'Owner is required';
+    if (formData.start_date && formData.end_date && formData.start_date > formData.end_date) {
+      newErrors.end_date = 'End date must be after start date';
     }
 
     setErrors(newErrors);
@@ -103,8 +130,16 @@ export function CampaignForm({ campaign, onSubmit, onCancel }: CampaignFormProps
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Convert text fields to RTE before submitting
+    const submitData: CampaignFormData = {
+      ...formData,
+      key_messages: createRTEFromText(keyMessagesText),
+      campaign_goals: createRTEFromText(campaignGoalsText),
+    };
+
     if (validate()) {
-      onSubmit(formData);
+      onSubmit(submitData);
     }
   };
 
@@ -117,40 +152,10 @@ export function CampaignForm({ campaign, onSubmit, onCancel }: CampaignFormProps
     }));
   };
 
-  const handleAddTag = () => {
-    const tag = tagInput.trim().toLowerCase();
-    if (tag && !formData.tags.includes(tag)) {
-      setFormData((prev) => ({
-        ...prev,
-        tags: [...prev.tags, tag],
-      }));
-      setTagInput('');
-    }
-  };
-
-  const handleRemoveTag = (tag: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      tags: prev.tags.filter((t) => t !== tag),
-    }));
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      handleAddTag();
-    }
-  };
-
   const statusOptions = Object.entries(CAMPAIGN_STATUS_LABELS).map(([value, label]) => ({
     label,
     value,
   }));
-
-  const channelOptions = Object.entries(CAMPAIGN_CHANNEL_LABELS) as [
-    CampaignChannel,
-    string
-  ][];
 
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
@@ -168,38 +173,54 @@ export function CampaignForm({ campaign, onSubmit, onCancel }: CampaignFormProps
           <h3>Basic Information</h3>
 
           <Field>
-            <FieldLabel htmlFor="name" required>
-              Campaign Name
+            <FieldLabel htmlFor="title" required>
+              Campaign Title
             </FieldLabel>
             <TextInput
-              id="name"
-              name="name"
-              value={formData.name}
+              id="title"
+              name="title"
+              value={formData.title}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setFormData((prev) => ({ ...prev, name: e.target.value }))
+                setFormData((prev) => ({ ...prev, title: e.target.value }))
               }
-              placeholder="Enter campaign name"
-              error={Boolean(errors.name)}
+              placeholder="Enter campaign title"
+              error={Boolean(errors.title)}
             />
-            {errors.name && <Help text={errors.name} type="error" />}
+            {errors.title && <Help text={errors.title} type="error" />}
           </Field>
 
           <Field>
-            <FieldLabel htmlFor="description" required>
-              Description
+            <FieldLabel htmlFor="key_messages">
+              Key Messages / Themes
             </FieldLabel>
             <Textarea
-              id="description"
-              name="description"
-              value={formData.description}
+              id="key_messages"
+              name="key_messages"
+              value={keyMessagesText}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                setFormData((prev) => ({ ...prev, description: e.target.value }))
+                setKeyMessagesText(e.target.value)
               }
-              placeholder="Describe your campaign objectives and strategy"
+              placeholder="Enter the key messages and themes for this campaign"
               rows={3}
-              error={Boolean(errors.description)}
             />
-            {errors.description && <Help text={errors.description} type="error" />}
+            <InstructionText>What are the main messages you want to communicate?</InstructionText>
+          </Field>
+
+          <Field>
+            <FieldLabel htmlFor="campaign_goals">
+              Campaign Goals
+            </FieldLabel>
+            <Textarea
+              id="campaign_goals"
+              name="campaign_goals"
+              value={campaignGoalsText}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                setCampaignGoalsText(e.target.value)
+              }
+              placeholder="Define the campaign objectives and goals"
+              rows={3}
+            />
+            <InstructionText>What are you trying to achieve with this campaign?</InstructionText>
           </Field>
 
           <Field>
@@ -213,36 +234,20 @@ export function CampaignForm({ campaign, onSubmit, onCancel }: CampaignFormProps
               placeholder="Select status"
             />
           </Field>
-
-          <Field>
-            <FieldLabel htmlFor="owner" required>
-              Campaign Owner
-            </FieldLabel>
-            <TextInput
-              id="owner"
-              name="owner"
-              value={formData.owner}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setFormData((prev) => ({ ...prev, owner: e.target.value }))
-              }
-              placeholder="Enter owner name"
-              error={Boolean(errors.owner)}
-            />
-            {errors.owner && <Help text={errors.owner} type="error" />}
-          </Field>
         </div>
 
         <div className={styles.section}>
           <h3>Channels</h3>
+          <InstructionText>Select the channels this campaign will use</InstructionText>
           {errors.channels && (
             <Help text={errors.channels} type="error" />
           )}
           <div className={styles.channels}>
-            {channelOptions.map(([channel, label]) => (
+            {ALL_CAMPAIGN_CHANNELS.map((channel) => (
               <Checkbox
                 key={channel}
                 id={`channel-${channel}`}
-                label={label}
+                label={CAMPAIGN_CHANNEL_LABELS[channel]}
                 checked={formData.channels.includes(channel)}
                 onChange={() => handleChannelToggle(channel)}
               />
@@ -255,92 +260,79 @@ export function CampaignForm({ campaign, onSubmit, onCancel }: CampaignFormProps
 
           <div className={styles.row}>
             <Field className={styles.halfWidth}>
-              <FieldLabel htmlFor="startDate" required>
+              <FieldLabel htmlFor="start_date" required>
                 Start Date
               </FieldLabel>
               <DatePicker
-                id="startDate"
-                value={formData.startDate ? new Date(formData.startDate) : null}
+                id="start_date"
+                value={formData.start_date ? new Date(formData.start_date) : null}
                 onChange={(date: Date | null) =>
                   setFormData((prev) => ({
                     ...prev,
-                    startDate: date ? date.toISOString().split('T')[0] : '',
+                    start_date: date ? date.toISOString().split('T')[0] : '',
                   }))
                 }
                 placeholder="Select start date"
               />
-              {errors.startDate && <Help text={errors.startDate} type="error" />}
+              {errors.start_date && <Help text={errors.start_date} type="error" />}
             </Field>
 
             <Field className={styles.halfWidth}>
-              <FieldLabel htmlFor="endDate" required>
+              <FieldLabel htmlFor="end_date" required>
                 End Date
               </FieldLabel>
               <DatePicker
-                id="endDate"
-                value={formData.endDate ? new Date(formData.endDate) : null}
+                id="end_date"
+                value={formData.end_date ? new Date(formData.end_date) : null}
                 onChange={(date: Date | null) =>
                   setFormData((prev) => ({
                     ...prev,
-                    endDate: date ? date.toISOString().split('T')[0] : '',
+                    end_date: date ? date.toISOString().split('T')[0] : '',
                   }))
                 }
                 placeholder="Select end date"
               />
-              {errors.endDate && <Help text={errors.endDate} type="error" />}
+              {errors.end_date && <Help text={errors.end_date} type="error" />}
             </Field>
           </div>
 
           <Field>
-            <FieldLabel htmlFor="budget" required>
-              Budget (USD)
+            <FieldLabel htmlFor="budget">
+              Budget
             </FieldLabel>
             <TextInput
               id="budget"
               name="budget"
-              type="number"
-              value={formData.budget.toString()}
+              value={formData.budget || ''}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setFormData((prev) => ({
                   ...prev,
-                  budget: parseFloat(e.target.value) || 0,
+                  budget: e.target.value,
                 }))
               }
-              placeholder="Enter budget amount"
-              error={Boolean(errors.budget)}
+              placeholder="e.g., $50,000 or 50000 USD"
             />
-            {errors.budget && <Help text={errors.budget} type="error" />}
+            <InstructionText>Enter the campaign budget in your preferred format</InstructionText>
           </Field>
         </div>
 
         <div className={styles.section}>
-          <h3>Tags</h3>
-          <div className={styles.tagInput}>
-            <TextInput
-              value={tagInput}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setTagInput(e.target.value)
-              }
-              onKeyPress={handleKeyPress}
-              placeholder="Add a tag and press Enter"
-            />
-            <Button buttonType="secondary" onClick={handleAddTag} type="button">
-              Add
-            </Button>
+          <h3>Contributors</h3>
+          <div className={styles.placeholder}>
+            <InstructionText>
+              Contributors field will be available in a future update.
+              This will allow you to select team members working on this campaign.
+            </InstructionText>
           </div>
-          <div className={styles.tags}>
-            {formData.tags.map((tag) => (
-              <span key={tag} className={styles.tag}>
-                {tag}
-                <button
-                  type="button"
-                  className={styles.removeTag}
-                  onClick={() => handleRemoveTag(tag)}
-                >
-                  &times;
-                </button>
-              </span>
-            ))}
+        </div>
+
+        <div className={styles.section}>
+          <h3>Assets</h3>
+          <div className={styles.placeholder}>
+            <InstructionText>
+              Asset upload will be available in a future update.
+              This will allow you to attach media files to your campaign.
+            </InstructionText>
           </div>
         </div>
       </div>

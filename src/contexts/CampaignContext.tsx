@@ -1,16 +1,19 @@
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, useMemo, ReactNode } from 'react';
 import { Campaign, CampaignFormData, CampaignMetrics } from '../types';
-import { generateId, calculateMetrics, createCampaign } from '../utils/campaign';
-import { SAMPLE_CAMPAIGNS } from '../utils/sampleData';
+import { calculateMetrics } from '../utils/campaign';
+import { createCampaignService, ICampaignService } from '../services';
+import { useAppSdk } from './AppSdkContext';
 
 interface CampaignContextValue {
   campaigns: Campaign[];
   metrics: CampaignMetrics;
   isLoading: boolean;
-  addCampaign: (data: CampaignFormData) => Campaign;
-  updateCampaign: (id: string, data: Partial<CampaignFormData>) => Campaign | null;
-  deleteCampaign: (id: string) => boolean;
-  getCampaign: (id: string) => Campaign | undefined;
+  error: string | null;
+  refreshCampaigns: () => Promise<void>;
+  addCampaign: (data: CampaignFormData) => Promise<Campaign>;
+  updateCampaign: (uid: string, data: Partial<CampaignFormData>) => Promise<Campaign | null>;
+  deleteCampaign: (uid: string) => Promise<boolean>;
+  getCampaign: (uid: string) => Campaign | undefined;
 }
 
 const CampaignContext = createContext<CampaignContextValue | null>(null);
@@ -20,51 +23,88 @@ interface CampaignProviderProps {
 }
 
 export function CampaignProvider({ children }: CampaignProviderProps) {
-  const [campaigns, setCampaigns] = useState<Campaign[]>(SAMPLE_CAMPAIGNS);
-  const [isLoading] = useState(false);
+  const { isStandaloneMode, stack, isLoading: isSdkLoading } = useAppSdk();
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const metrics = calculateMetrics(campaigns);
+  // Create service based on mode
+  const service = useMemo<ICampaignService>(() => {
+    return createCampaignService(isStandaloneMode, stack);
+  }, [isStandaloneMode, stack]);
 
-  const addCampaign = useCallback((data: CampaignFormData): Campaign => {
-    const newCampaign = createCampaign(data);
-    setCampaigns((prev) => [...prev, newCampaign]);
-    return newCampaign;
-  }, []);
+  const metrics = useMemo(() => calculateMetrics(campaigns), [campaigns]);
+
+  const refreshCampaigns = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const fetchedCampaigns = await service.fetchCampaigns();
+      setCampaigns(fetchedCampaigns);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to fetch campaigns';
+      setError(message);
+      console.error('Failed to fetch campaigns:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [service]);
+
+  // Initial fetch when SDK is ready
+  useEffect(() => {
+    if (!isSdkLoading) {
+      refreshCampaigns();
+    }
+  }, [isSdkLoading, refreshCampaigns]);
+
+  const addCampaign = useCallback(async (data: CampaignFormData): Promise<Campaign> => {
+    try {
+      const newCampaign = await service.createCampaign(data);
+      setCampaigns((prev) => [...prev, newCampaign]);
+      return newCampaign;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to create campaign';
+      setError(message);
+      throw err;
+    }
+  }, [service]);
 
   const updateCampaign = useCallback(
-    (id: string, data: Partial<CampaignFormData>): Campaign | null => {
-      let updatedCampaign: Campaign | null = null;
-      setCampaigns((prev) =>
-        prev.map((campaign) => {
-          if (campaign.id === id) {
-            updatedCampaign = {
-              ...campaign,
-              ...data,
-              updatedAt: new Date().toISOString(),
-            };
-            return updatedCampaign;
-          }
-          return campaign;
-        })
-      );
-      return updatedCampaign;
+    async (uid: string, data: Partial<CampaignFormData>): Promise<Campaign | null> => {
+      try {
+        const updatedCampaign = await service.updateCampaign(uid, data);
+        setCampaigns((prev) =>
+          prev.map((campaign) =>
+            campaign.uid === uid ? updatedCampaign : campaign
+          )
+        );
+        return updatedCampaign;
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Failed to update campaign';
+        setError(message);
+        throw err;
+      }
     },
-    []
+    [service]
   );
 
-  const deleteCampaign = useCallback((id: string): boolean => {
-    let deleted = false;
-    setCampaigns((prev) => {
-      const newCampaigns = prev.filter((campaign) => campaign.id !== id);
-      deleted = newCampaigns.length < prev.length;
-      return newCampaigns;
-    });
-    return deleted;
-  }, []);
+  const deleteCampaign = useCallback(async (uid: string): Promise<boolean> => {
+    try {
+      const success = await service.deleteCampaign(uid);
+      if (success) {
+        setCampaigns((prev) => prev.filter((campaign) => campaign.uid !== uid));
+      }
+      return success;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to delete campaign';
+      setError(message);
+      throw err;
+    }
+  }, [service]);
 
   const getCampaign = useCallback(
-    (id: string): Campaign | undefined => {
-      return campaigns.find((campaign) => campaign.id === id);
+    (uid: string): Campaign | undefined => {
+      return campaigns.find((campaign) => campaign.uid === uid);
     },
     [campaigns]
   );
@@ -75,6 +115,8 @@ export function CampaignProvider({ children }: CampaignProviderProps) {
         campaigns,
         metrics,
         isLoading,
+        error,
+        refreshCampaigns,
         addCampaign,
         updateCampaign,
         deleteCampaign,

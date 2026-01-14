@@ -8,6 +8,7 @@ import {
 } from '../types/campaign';
 import { CampaignPerformanceHighlights } from './CampaignPerformanceHighlights';
 import { CampaignActivityTimeline } from './CampaignActivityTimeline';
+import { CampaignRecommendedUpdates } from './CampaignRecommendedUpdates';
 import styles from './CampaignDetail.module.css';
 
 interface CampaignDetailProps {
@@ -105,6 +106,9 @@ export function CampaignDetail({ campaign, onEdit, onBack }: CampaignDetailProps
           )}
         </div>
       </div>
+
+      {/* Recommended Updates */}
+      <CampaignRecommendedUpdates campaign={campaign} />
 
       {/* Performance Highlights */}
       {(campaign.status === 'active' || campaign.status === 'completed') && (

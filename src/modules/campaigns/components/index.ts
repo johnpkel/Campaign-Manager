@@ -5,3 +5,4 @@ export * from './CampaignModuleCard';
 export * from './UpcomingCampaignsCard';
 export * from './CampaignPerformanceHighlights';
 export * from './CampaignActivityTimeline';
+export * from './CampaignRecommendedUpdates';

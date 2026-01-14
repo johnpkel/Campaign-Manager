@@ -24,12 +24,15 @@ interface PerformanceMetrics {
   totalClicks: number;
   totalConversions: number;
   totalRevenue: number;
+  opportunities: number;
   ctr: number;
   conversionRate: number;
   roi: number;
   costPerConversion: number;
   engagementRate: number;
 }
+
+const OPPORTUNITY_VALUE = 10000; // $10,000 per opportunity (Lytics Goals reference)
 
 interface DailyPerformance {
   date: string;
@@ -185,12 +188,20 @@ function calculateMetrics(dailyData: DailyPerformance[], campaign: Campaign): Pe
 
   const budgetNum = parseFloat(campaign.budget?.replace(/[^0-9.]/g, '') || '50000');
 
+  // Calculate opportunities based on conversions (Lytics Goals - high-value actions)
+  // Opportunities are typically 15-30% of conversions
+  const seed = campaign.uid.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const seededRandom = Math.sin(seed * 42) * 10000;
+  const opportunityRate = 0.15 + (seededRandom - Math.floor(seededRandom)) * 0.15;
+  const opportunities = Math.round(totals.conversions * opportunityRate);
+
   return {
     totalReach: Math.round(totals.impressions * 0.7), // Unique reach estimate
     totalImpressions: totals.impressions,
     totalClicks: totals.clicks,
     totalConversions: totals.conversions,
     totalRevenue: totals.revenue,
+    opportunities,
     ctr: totals.clicks / totals.impressions * 100,
     conversionRate: totals.conversions / totals.clicks * 100,
     roi: ((totals.revenue - budgetNum) / budgetNum) * 100,
@@ -318,6 +329,17 @@ export function CampaignPerformanceHighlights({ campaign }: CampaignPerformanceH
             <span className={styles.metricLabel}>Revenue</span>
           </div>
           <span className={styles.metricChange} style={{ color: '#10b981' }}>+23.1%</span>
+        </div>
+
+        <div className={styles.metricCard}>
+          <div className={styles.metricIcon} style={{ backgroundColor: '#0ea5e915' }}>
+            <Icon icon="Target" style={{ color: '#0ea5e9' }} />
+          </div>
+          <div className={styles.metricContent}>
+            <span className={styles.metricValue}>{formatNumber(metrics.opportunities)}</span>
+            <span className={styles.metricLabel}>Opportunities</span>
+          </div>
+          <span className={styles.metricChange} style={{ color: '#10b981' }}>+18.5%</span>
         </div>
 
         <div className={styles.metricCard}>
@@ -546,6 +568,34 @@ export function CampaignPerformanceHighlights({ campaign }: CampaignPerformanceH
               />
             </LineChart>
           </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Opportunity Value Total (Lytics Goals) */}
+      <div className={styles.opportunityTotal}>
+        <div className={styles.opportunityHeader}>
+          <div className={styles.opportunityIcon}>
+            <Icon icon="Target" style={{ color: '#0ea5e9' }} />
+          </div>
+          <div className={styles.opportunityTitleSection}>
+            <h3 className={styles.opportunityTitle}>Opportunity Value (Lytics Goals)</h3>
+            <span className={styles.opportunitySubtitle}>High-value conversions tracked via Lytics goal completions</span>
+          </div>
+        </div>
+        <div className={styles.opportunityBreakdown}>
+          <div className={styles.opportunityRow}>
+            <span className={styles.opportunityLabel}>Opportunities Registered</span>
+            <span className={styles.opportunityValue}>{metrics.opportunities.toLocaleString()}</span>
+          </div>
+          <div className={styles.opportunityRow}>
+            <span className={styles.opportunityLabel}>Value per Opportunity</span>
+            <span className={styles.opportunityValue}>{formatCurrency(OPPORTUNITY_VALUE)}</span>
+          </div>
+          <div className={styles.opportunityDivider} />
+          <div className={styles.opportunityRow}>
+            <span className={styles.opportunityTotalLabel}>Total Opportunity Value</span>
+            <span className={styles.opportunityTotalValue}>{formatCurrency(metrics.opportunities * OPPORTUNITY_VALUE)}</span>
+          </div>
         </div>
       </div>
     </div>

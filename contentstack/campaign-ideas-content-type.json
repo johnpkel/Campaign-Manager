@@ -1,0 +1,153 @@
+{
+  "content_type": {
+    "title": "Campaign Ideas",
+    "uid": "campaign_ideas",
+    "schema": [
+      {
+        "display_name": "Key Question",
+        "uid": "key_question",
+        "data_type": "text",
+        "field_metadata": {
+          "instruction": "The main question or problem this campaign idea addresses",
+          "_default": true,
+          "version": 3
+        },
+        "mandatory": true,
+        "unique": false,
+        "multiple": false,
+        "non_localizable": false
+      },
+      {
+        "display_name": "Description",
+        "uid": "description",
+        "data_type": "text",
+        "field_metadata": {
+          "instruction": "Detailed description of the campaign idea and context",
+          "multiline": true,
+          "version": 3
+        },
+        "mandatory": true,
+        "multiple": false,
+        "unique": false,
+        "non_localizable": false
+      },
+      {
+        "display_name": "Requester",
+        "uid": "requester",
+        "data_type": "text",
+        "field_metadata": {
+          "instruction": "Name of the person who requested or suggested this idea",
+          "version": 3
+        },
+        "mandatory": true,
+        "multiple": false,
+        "unique": false,
+        "non_localizable": false
+      },
+      {
+        "display_name": "Urgency",
+        "uid": "urgency",
+        "data_type": "text",
+        "display_type": "dropdown",
+        "enum": {
+          "advanced": false,
+          "choices": [
+            { "value": "low" },
+            { "value": "medium" },
+            { "value": "high" },
+            { "value": "critical" }
+          ]
+        },
+        "field_metadata": {
+          "instruction": "How urgent is this campaign idea?",
+          "version": 3
+        },
+        "mandatory": true,
+        "multiple": false,
+        "unique": false,
+        "non_localizable": false
+      },
+      {
+        "display_name": "Potential Opportunity",
+        "uid": "potential_opportunity",
+        "data_type": "text",
+        "field_metadata": {
+          "instruction": "Describe the business opportunity (e.g., revenue potential, market size, competitive advantage)",
+          "multiline": true,
+          "version": 3
+        },
+        "mandatory": false,
+        "multiple": false,
+        "unique": false,
+        "non_localizable": false
+      },
+      {
+        "display_name": "Insights",
+        "uid": "insights",
+        "data_type": "text",
+        "field_metadata": {
+          "instruction": "Supporting data, analytics insights, or research that supports this idea",
+          "multiline": true,
+          "version": 3
+        },
+        "mandatory": false,
+        "multiple": false,
+        "unique": false,
+        "non_localizable": false
+      },
+      {
+        "display_name": "Source",
+        "uid": "source",
+        "data_type": "text",
+        "display_type": "dropdown",
+        "enum": {
+          "advanced": false,
+          "choices": [
+            { "value": "slack" },
+            { "value": "manual" }
+          ]
+        },
+        "field_metadata": {
+          "instruction": "How was this idea captured? (Slack integration or manual entry)",
+          "version": 3
+        },
+        "mandatory": true,
+        "multiple": false,
+        "unique": false,
+        "non_localizable": false
+      },
+      {
+        "display_name": "Status",
+        "uid": "status",
+        "data_type": "text",
+        "display_type": "dropdown",
+        "enum": {
+          "advanced": false,
+          "choices": [
+            { "value": "new" },
+            { "value": "under_review" },
+            { "value": "approved" },
+            { "value": "in_progress" },
+            { "value": "archived" },
+            { "value": "rejected" }
+          ]
+        },
+        "field_metadata": {
+          "instruction": "Current status of this campaign idea",
+          "version": 3
+        },
+        "mandatory": true,
+        "multiple": false,
+        "unique": false,
+        "non_localizable": false
+      }
+    ],
+    "options": {
+      "title": "key_question",
+      "publishable": true,
+      "is_page": false,
+      "singleton": false,
+      "sub_title": ["urgency", "requester"]
+    }
+  }
+}

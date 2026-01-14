@@ -1,6 +1,6 @@
 import { ModuleCard } from '../../components/common';
 import { useExperience, MODULE_CONFIGS } from '../../experience';
-import { CampaignModuleCard, UpcomingCampaignsCard } from '../../modules/campaigns/components';
+import { CampaignModuleCard, UpcomingCampaignsCard, CampaignIdeasCard } from '../../modules/campaigns/components';
 import { AnalyticsModuleCard } from '../../modules/analytics/components';
 import { ActivityDigestCard } from '../../modules/collaboration/components';
 import { DailyDigestCard } from '../../modules/digest';
@@ -39,6 +39,13 @@ export function ExperienceDashboard() {
           onClick={() => navigateToModule('campaigns')}
         >
           <UpcomingCampaignsCard />
+        </ModuleCard>
+
+        <ModuleCard
+          config={MODULE_CONFIGS.ideas}
+          clickable={false}
+        >
+          <CampaignIdeasCard />
         </ModuleCard>
 
         <ModuleCard

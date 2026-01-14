@@ -1,4 +1,4 @@
-import { Campaign, RTEContent } from '../types';
+import { Campaign, RTEContent, MilestoneStatus } from '../types';
 
 // Helper to create simple RTE content
 function createRTEContent(text: string): RTEContent {
@@ -15,6 +15,11 @@ function createRTEContent(text: string): RTEContent {
   };
 }
 
+// Helper to create timeline milestone with status
+function createMilestone(name: string, date: string, status: MilestoneStatus) {
+  return { milestone_name: name, milestone_date: date, status };
+}
+
 export const MOCK_CAMPAIGNS: Campaign[] = [
   {
     uid: 'blt_campaign_001',
@@ -28,6 +33,17 @@ export const MOCK_CAMPAIGNS: Campaign[] = [
     status: 'active',
     channels: ['Web', 'Email', 'Social'],
     assets: [],
+    timeline: [
+      createMilestone('Campaign Launch', '2024-06-01', 'completed'),
+      createMilestone('Mid-Campaign Review', '2024-07-15', 'completed'),
+      createMilestone('Final Push', '2024-08-15', 'in_progress'),
+    ],
+    market_research: createRTEContent('Competitor analysis: Target running 40% off, Wayfair with free shipping. Key opportunity: outdoor entertaining space. References: https://example.com/summer-trends'),
+    brand_kit: [],
+    voice_profile: [],
+    audiences: [],
+    releases: [],
+    entries: [],
     created_at: '2024-05-15T10:00:00Z',
     updated_at: '2024-06-20T14:30:00Z',
     created_by: 'sarah.johnson',
@@ -46,6 +62,18 @@ export const MOCK_CAMPAIGNS: Campaign[] = [
     status: 'active',
     channels: ['Web', 'Native Mobile', 'Social', 'Ads'],
     assets: [],
+    timeline: [
+      createMilestone('Teaser Campaign', '2024-09-01', 'completed'),
+      createMilestone('Official Announcement', '2024-09-15', 'completed'),
+      createMilestone('Pre-order Opens', '2024-10-01', 'in_progress'),
+      createMilestone('Launch Day', '2024-10-15', 'pending'),
+    ],
+    market_research: createRTEContent('Smart home market growing 25% YoY. Main competitors: Amazon Echo, Google Nest, Apple HomeKit. Differentiator: open ecosystem, local processing.'),
+    brand_kit: [],
+    voice_profile: [],
+    audiences: [],
+    releases: [],
+    entries: [],
     created_at: '2024-07-01T09:00:00Z',
     updated_at: '2024-08-15T11:00:00Z',
     created_by: 'mike.chen',
@@ -64,6 +92,16 @@ export const MOCK_CAMPAIGNS: Campaign[] = [
     status: 'paused',
     channels: ['Web', 'Social', 'Ads'],
     assets: [],
+    timeline: [
+      createMilestone('Strategy Finalization', '2024-10-01', 'completed'),
+      createMilestone('Content Production', '2024-10-15', 'pending'),
+    ],
+    market_research: createRTEContent('Brand perception survey shows 67% awareness in target demo. Opportunity to improve trust metrics around sustainability claims.'),
+    brand_kit: [],
+    voice_profile: [],
+    audiences: [],
+    releases: [],
+    entries: [],
     created_at: '2024-08-20T14:00:00Z',
     updated_at: '2024-09-05T16:00:00Z',
     created_by: 'emma.wilson',
@@ -82,6 +120,18 @@ export const MOCK_CAMPAIGNS: Campaign[] = [
     status: 'completed',
     channels: ['Web', 'Email', 'Native Mobile', 'Ads'],
     assets: [],
+    timeline: [
+      createMilestone('Gift Guide Launch', '2023-11-01', 'completed'),
+      createMilestone('Black Friday', '2023-11-24', 'completed'),
+      createMilestone('Cyber Monday', '2023-11-27', 'completed'),
+      createMilestone('Last Ship Date', '2023-12-18', 'completed'),
+    ],
+    market_research: createRTEContent('Holiday spending projected up 3% YoY. Top gift categories: electronics, home goods, experiences.'),
+    brand_kit: [],
+    voice_profile: [],
+    audiences: [],
+    releases: [],
+    entries: [],
     created_at: '2023-09-15T10:00:00Z',
     updated_at: '2024-01-05T09:00:00Z',
     created_by: 'alex.rivera',
@@ -100,6 +150,18 @@ export const MOCK_CAMPAIGNS: Campaign[] = [
     status: 'active',
     channels: ['Email', 'Native Mobile'],
     assets: [],
+    timeline: [
+      createMilestone('Program Launch', '2024-01-01', 'completed'),
+      createMilestone('Q1 Review', '2024-04-01', 'completed'),
+      createMilestone('Q2 Review', '2024-07-01', 'completed'),
+      createMilestone('Q3 Review', '2024-10-01', 'in_progress'),
+    ],
+    market_research: createRTEContent('Customer lifetime value analysis shows top 20% of customers drive 60% of revenue. Retention rates currently at 72%.'),
+    brand_kit: [],
+    voice_profile: [],
+    audiences: [],
+    releases: [],
+    entries: [],
     created_at: '2023-11-01T08:00:00Z',
     updated_at: '2024-06-15T10:00:00Z',
     created_by: 'jordan.lee',
@@ -118,6 +180,17 @@ export const MOCK_CAMPAIGNS: Campaign[] = [
     status: 'completed',
     channels: ['Web', 'Email', 'Social', 'Ads'],
     assets: [],
+    timeline: [
+      createMilestone('Early Bird Deals', '2024-07-15', 'completed'),
+      createMilestone('Peak Shopping Week', '2024-08-15', 'completed'),
+      createMilestone('Last Minute Push', '2024-09-01', 'completed'),
+    ],
+    market_research: createRTEContent('Back-to-school spending expected to reach $40B nationally. Laptop and tech categories growing fastest.'),
+    brand_kit: [],
+    voice_profile: [],
+    audiences: [],
+    releases: [],
+    entries: [],
     created_at: '2024-05-01T09:00:00Z',
     updated_at: '2024-09-20T14:00:00Z',
     created_by: 'sarah.johnson',
@@ -136,6 +209,18 @@ export const MOCK_CAMPAIGNS: Campaign[] = [
     status: 'completed',
     channels: ['Web'],
     assets: [],
+    timeline: [
+      createMilestone('Keyword Research', '2024-01-15', 'completed'),
+      createMilestone('Content Calendar', '2024-02-01', 'completed'),
+      createMilestone('First 50 Articles', '2024-04-01', 'completed'),
+      createMilestone('Complete Audit', '2024-06-15', 'completed'),
+    ],
+    market_research: createRTEContent('SEO audit shows opportunity in informational queries. Competitors weak on technical how-to content.'),
+    brand_kit: [],
+    voice_profile: [],
+    audiences: [],
+    releases: [],
+    entries: [],
     created_at: '2023-12-01T10:00:00Z',
     updated_at: '2024-07-05T16:00:00Z',
     created_by: 'mike.chen',

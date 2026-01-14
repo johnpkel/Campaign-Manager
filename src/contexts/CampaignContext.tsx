@@ -23,15 +23,15 @@ interface CampaignProviderProps {
 }
 
 export function CampaignProvider({ children }: CampaignProviderProps) {
-  const { isStandaloneMode, stack, isLoading: isSdkLoading } = useAppSdk();
+  const { isStandaloneMode, isLoading: isSdkLoading } = useAppSdk();
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Create service based on mode
+  // Create service based on mode - uses Management API when credentials available
   const service = useMemo<ICampaignService>(() => {
-    return createCampaignService(isStandaloneMode, stack);
-  }, [isStandaloneMode, stack]);
+    return createCampaignService(isStandaloneMode);
+  }, [isStandaloneMode]);
 
   const metrics = useMemo(() => calculateMetrics(campaigns), [campaigns]);
 

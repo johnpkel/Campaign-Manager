@@ -1,0 +1,516 @@
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  gap: 16px;
+}
+
+.headerMain {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.backButton {
+  background: none;
+  border: none;
+  color: #6366f1;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 4px;
+}
+
+.backButton:hover {
+  color: #4f46e5;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+.headerMeta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 14px;
+  color: #64748b;
+}
+
+.calendarIcon,
+.voiceIcon {
+  margin-right: 6px;
+}
+
+.dateRange {
+  display: flex;
+  align-items: center;
+}
+
+.voiceProfile {
+  display: flex;
+  align-items: center;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.statusBadge {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.editButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: #6366f1;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.editButton:hover {
+  background: #4f46e5;
+}
+
+.editIcon {
+  font-size: 14px;
+}
+
+/* Sections */
+.section {
+  margin-bottom: 24px;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sectionIcon {
+  font-size: 16px;
+}
+
+.card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.subsection {
+  margin-bottom: 20px;
+}
+
+.subsection:last-child {
+  margin-bottom: 0;
+}
+
+.subsectionTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #475569;
+  margin: 0 0 12px;
+}
+
+.bulletList {
+  margin: 0;
+  padding-left: 20px;
+  color: #475569;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.bulletList li {
+  margin-bottom: 4px;
+}
+
+.emptyText {
+  color: #94a3b8;
+  font-size: 14px;
+  font-style: italic;
+  margin: 0;
+}
+
+/* Audiences */
+.audienceList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.audienceRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: #f8fafc;
+  border-radius: 6px;
+}
+
+.audienceName {
+  color: #6366f1;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.audienceCount {
+  color: #475569;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Brand Kit */
+.brandKitList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.brandKitBadge {
+  display: inline-block;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+  color: #6366f1;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Assets Carousel */
+.assetsCarousel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.assetDisplay {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.assetImage {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.assetInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.assetName {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.assetType {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.assetThumbnails {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.assetThumb {
+  width: 60px;
+  height: 60px;
+  border: 2px solid #e2e8f0;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  padding: 0;
+  background: #f8fafc;
+}
+
+.assetThumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.assetThumbActive {
+  border-color: #6366f1;
+}
+
+/* Channels */
+.channelsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.channelCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #f8fafc;
+  border-radius: 8px;
+}
+
+.channelIcon {
+  font-size: 20px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border-radius: 6px;
+}
+
+.channelInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.channelName {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.channelId {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+/* Market Research */
+.researchLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.researchLink {
+  color: #6366f1;
+  font-size: 14px;
+  text-decoration: underline;
+}
+
+.researchLink:hover {
+  color: #4f46e5;
+}
+
+/* Timeline */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.timelineItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.timelineItem:last-child {
+  border-bottom: none;
+}
+
+.timelineLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.timelineStatus {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.status_completed {
+  background: #10b981;
+  color: white;
+}
+
+.status_in_progress {
+  background: white;
+  border: 2px solid #f59e0b;
+  color: #f59e0b;
+}
+
+.status_pending {
+  background: white;
+  border: 2px solid #cbd5e1;
+  color: #cbd5e1;
+}
+
+.timelineContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.milestoneName {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.milestoneStatusLabel {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.milestoneDate {
+  font-size: 14px;
+  color: #64748b;
+}
+
+/* Contributors */
+.contributorsList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.contributorItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.contributorAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #6366f1;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.contributorInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.contributorName {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.contributorRole {
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* Campaign Entries Table */
+.entriesTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.entriesTable th {
+  text-align: left;
+  padding: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #64748b;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.entriesTable td {
+  padding: 12px;
+  vertical-align: middle;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.entriesTable tr:last-child td {
+  border-bottom: none;
+}
+
+.entryImage {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.entryImagePlaceholder {
+  width: 48px;
+  height: 48px;
+  background: #f1f5f9;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.entryTitle {
+  font-size: 14px;
+  color: #1e293b;
+}
+
+.entryTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.entryTag {
+  padding: 4px 8px;
+  background: #f1f5f9;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #64748b;
+}

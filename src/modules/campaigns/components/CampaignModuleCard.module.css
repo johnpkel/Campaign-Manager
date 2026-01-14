@@ -1,0 +1,196 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #e2e8f0;
+  border-top-color: #6366f1;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Summary Header */
+.summaryHeader {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.summaryItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.summaryValue {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.summaryLabel {
+  font-size: 9px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 2px;
+}
+
+/* Campaign List */
+.campaignList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Campaign Card */
+.campaignCard {
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 14px;
+  border: 1px solid #e2e8f0;
+}
+
+.campaignHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.campaignTitleSection {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.campaignTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.campaignBudget {
+  font-size: 12px;
+  font-weight: 600;
+  color: #10b981;
+}
+
+.campaignTotals {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.campaignTotalItem {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.campaignTotalItem strong {
+  color: #1e293b;
+  font-weight: 600;
+}
+
+/* Channel Grid */
+.channelGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Channel Card */
+.channelCard {
+  background: white;
+  border-radius: 6px;
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.channelHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.channelIcon {
+  width: 14px;
+  height: 14px;
+  color: #6366f1;
+}
+
+.channelName {
+  font-size: 11px;
+  font-weight: 600;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.channelStats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+}
+
+.channelStat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.statValue {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.statLabel {
+  font-size: 8px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-top: 1px;
+}
+
+/* Empty State */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 32px;
+  color: #94a3b8;
+  font-size: 13px;
+}

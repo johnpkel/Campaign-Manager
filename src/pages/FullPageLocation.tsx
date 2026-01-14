@@ -1,24 +1,35 @@
 import { useState, useCallback } from 'react';
 import { Icon, cbModal, ModalHeader, ModalBody } from '@contentstack/venus-components';
-import { CampaignList, CampaignForm, MetricsCard } from '../components';
+import { CampaignList, CampaignForm, CampaignDetail, MetricsCard } from '../components';
 import { useCampaigns } from '../contexts';
+import { useExperience, ExperienceDashboard, ModuleView } from '../experience';
+import { ActivityFeed } from '../modules/collaboration';
 import { Campaign, CampaignFormData } from '../types';
 import styles from './FullPageLocation.module.css';
 
-type View = 'list' | 'create' | 'edit';
+type CampaignView = 'list' | 'detail' | 'create' | 'edit';
 
-export function FullPageLocation() {
+function CampaignModule() {
   const { metrics, addCampaign, updateCampaign } = useCampaigns();
-  const [currentView, setCurrentView] = useState<View>('list');
+  const [currentView, setCurrentView] = useState<CampaignView>('list');
   const [editingCampaign, setEditingCampaign] = useState<Campaign | null>(null);
+  const [viewingCampaign, setViewingCampaign] = useState<Campaign | null>(null);
 
   const handleCreate = useCallback(() => {
     setEditingCampaign(null);
+    setViewingCampaign(null);
     setCurrentView('create');
+  }, []);
+
+  const handleView = useCallback((campaign: Campaign) => {
+    setViewingCampaign(campaign);
+    setEditingCampaign(null);
+    setCurrentView('detail');
   }, []);
 
   const handleEdit = useCallback((campaign: Campaign) => {
     setEditingCampaign(campaign);
+    setViewingCampaign(null);
     setCurrentView('edit');
   }, []);
 
@@ -74,27 +85,30 @@ export function FullPageLocation() {
   const handleFormCancel = useCallback(() => {
     setCurrentView('list');
     setEditingCampaign(null);
+    setViewingCampaign(null);
   }, []);
 
+  const handleBackToList = useCallback(() => {
+    setCurrentView('list');
+    setViewingCampaign(null);
+    setEditingCampaign(null);
+  }, []);
+
+  const handleEditFromDetail = useCallback(() => {
+    if (viewingCampaign) {
+      setEditingCampaign(viewingCampaign);
+      setCurrentView('edit');
+    }
+  }, [viewingCampaign]);
+
   return (
-    <div className={styles.container}>
-      <header className={styles.header}>
-        <div className={styles.titleSection}>
-          <Icon icon="Target" className={styles.logo} />
-          <div>
-            <h1 className={styles.title}>Campaign Manager</h1>
-            <p className={styles.subtitle}>
-              Manage and track your marketing campaigns
-            </p>
-          </div>
-        </div>
-        {currentView !== 'list' && (
-          <button className={styles.backButton} onClick={handleFormCancel}>
-            <Icon icon="ChevronLeft" />
-            Back to Campaigns
-          </button>
-        )}
-      </header>
+    <div className={styles.moduleContent}>
+      {(currentView === 'create' || currentView === 'edit') && (
+        <button className={styles.backButton} onClick={handleFormCancel}>
+          <Icon icon="ChevronLeft" />
+          Back to Campaigns
+        </button>
+      )}
 
       {currentView === 'list' && (
         <div className={styles.metricsBar}>
@@ -125,9 +139,16 @@ export function FullPageLocation() {
         </div>
       )}
 
-      <main className={styles.main}>
+      <div className={styles.moduleMain}>
         {currentView === 'list' && (
-          <CampaignList onEdit={handleEdit} onCreate={handleCreate} />
+          <CampaignList onEdit={handleEdit} onCreate={handleCreate} onView={handleView} />
+        )}
+        {currentView === 'detail' && viewingCampaign && (
+          <CampaignDetail
+            campaign={viewingCampaign}
+            onEdit={handleEditFromDetail}
+            onBack={handleBackToList}
+          />
         )}
         {(currentView === 'create' || currentView === 'edit') && (
           <CampaignForm
@@ -136,7 +157,60 @@ export function FullPageLocation() {
             onCancel={handleFormCancel}
           />
         )}
-      </main>
+      </div>
     </div>
+  );
+}
+
+function AnalyticsModule() {
+  return (
+    <div className={styles.moduleContent}>
+      <div className={styles.comingSoon}>
+        <div className={styles.comingSoonIcon}>📊</div>
+        <h2>Analytics Dashboard</h2>
+        <p>
+          Detailed analytics and insights from your marketing channels.
+          Connect Lytics, Google Analytics, and other data sources.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function CollaborationModule() {
+  return (
+    <div className={styles.moduleContent}>
+      <ActivityFeed />
+    </div>
+  );
+}
+
+export function FullPageLocation() {
+  const { activeModule, isModuleExpanded } = useExperience();
+
+  // Show dashboard when no module is expanded
+  if (!isModuleExpanded || !activeModule) {
+    return <ExperienceDashboard />;
+  }
+
+  // Show the expanded module view
+  const renderModule = () => {
+    switch (activeModule) {
+      case 'campaigns':
+      case 'upcoming':
+        return <CampaignModule />;
+      case 'analytics':
+        return <AnalyticsModule />;
+      case 'collaboration':
+        return <CollaborationModule />;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <ModuleView moduleId={activeModule}>
+      {renderModule()}
+    </ModuleView>
   );
 }

@@ -83,3 +83,43 @@
   flex: 1;
   overflow: hidden;
 }
+
+.moduleContent {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.moduleMain {
+  flex: 1;
+  overflow: hidden;
+}
+
+.comingSoon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 48px;
+  text-align: center;
+}
+
+.comingSoonIcon {
+  font-size: 64px;
+  margin-bottom: 24px;
+}
+
+.comingSoon h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 12px;
+}
+
+.comingSoon p {
+  font-size: 14px;
+  color: #64748b;
+  max-width: 400px;
+  line-height: 1.6;
+}

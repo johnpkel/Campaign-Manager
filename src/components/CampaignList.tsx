@@ -25,11 +25,12 @@ import styles from './CampaignList.module.css';
 interface CampaignListProps {
   onEdit: (campaign: Campaign) => void;
   onCreate: () => void;
+  onView?: (campaign: Campaign) => void;
 }
 
 type SortableField = 'title' | 'status' | 'start_date' | 'end_date' | 'updated_at';
 
-export function CampaignList({ onEdit, onCreate }: CampaignListProps) {
+export function CampaignList({ onEdit, onCreate, onView }: CampaignListProps) {
   const { campaigns, deleteCampaign, isLoading, error } = useCampaigns();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<CampaignStatus | 'all'>('all');
@@ -195,6 +196,7 @@ export function CampaignList({ onEdit, onCreate }: CampaignListProps) {
                 {getSortIcon('status') && <Icon icon={getSortIcon('status')!} size="small" />}
               </th>
               <th>Channels</th>
+              <th>Milestones</th>
               <th>Budget</th>
               <th onClick={() => handleSort('start_date')} className={styles.sortable}>
                 Start Date
@@ -212,7 +214,7 @@ export function CampaignList({ onEdit, onCreate }: CampaignListProps) {
           <tbody>
             {filteredCampaigns.length === 0 ? (
               <tr>
-                <td colSpan={7} className={styles.emptyState}>
+                <td colSpan={8} className={styles.emptyState}>
                   <div className={styles.emptyContent}>
                     <Icon icon="Folder" size="large" />
                     <p>No campaigns found</p>
@@ -239,7 +241,16 @@ export function CampaignList({ onEdit, onCreate }: CampaignListProps) {
                 <tr key={campaign.uid}>
                   <td>
                     <div className={styles.campaignName}>
-                      <strong>{campaign.title}</strong>
+                      {onView ? (
+                        <button
+                          className={styles.campaignNameLink}
+                          onClick={() => onView(campaign)}
+                        >
+                          {campaign.title}
+                        </button>
+                      ) : (
+                        <strong>{campaign.title}</strong>
+                      )}
                     </div>
                   </td>
                   <td>
@@ -260,6 +271,21 @@ export function CampaignList({ onEdit, onCreate }: CampaignListProps) {
                         </Tooltip>
                       ))}
                     </div>
+                  </td>
+                  <td>
+                    {campaign.timeline && campaign.timeline.length > 0 ? (
+                      <Tooltip
+                        content={campaign.timeline.map((m) => m.milestone_name).join(', ')}
+                        position="top"
+                      >
+                        <span className={styles.milestones}>
+                          <Icon icon="Calendar" size="small" />
+                          {campaign.timeline.length}
+                        </span>
+                      </Tooltip>
+                    ) : (
+                      '-'
+                    )}
                   </td>
                   <td>{campaign.budget || '-'}</td>
                   <td>{formatDate(campaign.start_date)}</td>

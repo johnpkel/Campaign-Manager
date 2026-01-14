@@ -1,5 +1,8 @@
 import { Suspense, lazy } from 'react';
 import { AppSdkProvider, CampaignProvider, useAppSdk } from './contexts';
+import { ExperienceProvider } from './experience';
+import { CollaborationProvider } from './modules/collaboration';
+import { AIProvider, AIChatPanel, AIFloatingButton, useAI } from './modules/ai';
 import styles from './App.module.css';
 
 const FullPageLocation = lazy(() =>
@@ -63,14 +66,32 @@ function LocationRouter() {
   );
 }
 
+function AppLayout() {
+  const { isOpen } = useAI();
+
+  return (
+    <div className={styles.app}>
+      <div className={`${styles.mainContent} ${isOpen ? styles.mainContentWithDrawer : ''}`}>
+        <LocationRouter />
+      </div>
+      <AIChatPanel />
+      <AIFloatingButton />
+    </div>
+  );
+}
+
 function App() {
   return (
     <AppSdkProvider>
-      <CampaignProvider>
-        <div className={styles.app}>
-          <LocationRouter />
-        </div>
-      </CampaignProvider>
+      <ExperienceProvider>
+        <CampaignProvider>
+          <CollaborationProvider>
+            <AIProvider>
+              <AppLayout />
+            </AIProvider>
+          </CollaborationProvider>
+        </CampaignProvider>
+      </ExperienceProvider>
     </AppSdkProvider>
   );
 }

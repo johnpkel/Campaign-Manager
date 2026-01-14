@@ -81,7 +81,7 @@
 
 .main {
   flex: 1;
-  overflow: hidden;
+  overflow: auto;
 }
 
 .moduleContent {
@@ -92,7 +92,7 @@
 
 .moduleMain {
   flex: 1;
-  overflow: hidden;
+  overflow: auto;
 }
 
 .comingSoon {

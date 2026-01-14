@@ -3,3 +3,5 @@ export * from './CampaignList';
 export * from './CampaignDetail';
 export * from './CampaignModuleCard';
 export * from './UpcomingCampaignsCard';
+export * from './CampaignPerformanceHighlights';
+export * from './CampaignActivityTimeline';

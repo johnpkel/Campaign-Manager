@@ -4,20 +4,23 @@ import styles from './ModuleCard.module.css';
 
 interface ModuleCardProps {
   config: ModuleConfig;
-  onClick: () => void;
+  onClick?: () => void;
   children: React.ReactNode;
   actions?: React.ReactNode;
   fullWidth?: boolean;
+  clickable?: boolean;
 }
 
-export function ModuleCard({ config, onClick, children, actions, fullWidth }: ModuleCardProps) {
+export function ModuleCard({ config, onClick, children, actions, fullWidth, clickable = true }: ModuleCardProps) {
+  const isClickable = clickable && onClick;
+
   return (
     <div
-      className={`${styles.card} ${fullWidth ? styles.fullWidth : ''}`}
-      onClick={onClick}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => e.key === 'Enter' && onClick()}
+      className={`${styles.card} ${fullWidth ? styles.fullWidth : ''} ${!isClickable ? styles.notClickable : ''}`}
+      onClick={isClickable ? onClick : undefined}
+      role={isClickable ? 'button' : undefined}
+      tabIndex={isClickable ? 0 : undefined}
+      onKeyDown={isClickable ? (e) => e.key === 'Enter' && onClick?.() : undefined}
     >
       <div className={styles.header}>
         <div className={styles.titleSection}>
@@ -35,12 +38,14 @@ export function ModuleCard({ config, onClick, children, actions, fullWidth }: Mo
         {actions && <div className={styles.actions}>{actions}</div>}
       </div>
       <div className={styles.content}>{children}</div>
-      <div className={styles.footer}>
-        <span className={styles.viewMore}>
-          View details
-          <Icon icon="ChevronRight" size="small" />
-        </span>
-      </div>
+      {isClickable && (
+        <div className={styles.footer}>
+          <span className={styles.viewMore}>
+            View details
+            <Icon icon="ChevronRight" size="small" />
+          </span>
+        </div>
+      )}
     </div>
   );
 }

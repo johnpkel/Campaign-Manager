@@ -7,10 +7,11 @@ export interface AIMessage {
 }
 
 export interface AIMessageMetadata {
-  type?: 'recommendation' | 'question' | 'confirmation' | 'standard';
+  type?: 'recommendation' | 'question' | 'confirmation' | 'standard' | 'targeting';
   recommendations?: CampaignRecommendation[];
   questionType?: CampaignCreationStep;
   campaignDraft?: Partial<CampaignDraft>;
+  targetingRecommendations?: CampaignTargetingRecommendations;
 }
 
 export type CampaignCreationStep =
@@ -26,7 +27,37 @@ export type CampaignCreationStep =
   | 'market_research'
   | 'brand_kit'
   | 'review'
+  | 'audience_page_recommendations'
+  | 'variant_confirmation'
   | 'complete';
+
+// Lytics audience with member count
+export interface LyticsAudience {
+  id: string;
+  name: string;
+  description: string;
+  memberCount: number;
+  matchScore: number; // How well it matches the campaign (0-100)
+}
+
+// Website page recommendation
+export interface RecommendedPage {
+  entryUid: string;
+  title: string;
+  url: string;
+  contentType: string;
+  pageType: 'landing' | 'product' | 'blog' | 'category' | 'homepage';
+  relevanceScore: number; // How relevant to the campaign (0-100)
+}
+
+// Audience and page recommendations for campaign
+export interface CampaignTargetingRecommendations {
+  audiences: LyticsAudience[];
+  pages: RecommendedPage[];
+  selectedAudiences?: LyticsAudience[];
+  selectedPages?: RecommendedPage[];
+  createVariants?: boolean;
+}
 
 export interface CampaignRecommendation {
   id: string;
@@ -60,6 +91,8 @@ export interface CampaignDraft {
   channels: string[];
   marketResearch: string;
   brandKit: string;
+  // Targeting recommendations (added after review)
+  targetingRecommendations?: CampaignTargetingRecommendations;
 }
 
 export interface AudienceInsight {

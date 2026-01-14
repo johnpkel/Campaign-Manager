@@ -1,4 +1,4 @@
-import { Campaign, RTEContent, MilestoneStatus } from '../types';
+import { Campaign, RTEContent, MilestoneStatus, CampaignActivity } from '../types';
 
 // Helper to create simple RTE content
 function createRTEContent(text: string): RTEContent {
@@ -44,6 +44,11 @@ export const MOCK_CAMPAIGNS: Campaign[] = [
     audiences: [],
     releases: [],
     entries: [],
+    utms: [
+      'utm_source=email&utm_medium=newsletter&utm_campaign=summer_sale_2024',
+      'utm_source=facebook&utm_medium=social&utm_campaign=summer_sale_2024',
+      'utm_source=google&utm_medium=cpc&utm_campaign=summer_sale_2024',
+    ],
     created_at: '2024-05-15T10:00:00Z',
     updated_at: '2024-06-20T14:30:00Z',
     created_by: 'sarah.johnson',
@@ -74,6 +79,12 @@ export const MOCK_CAMPAIGNS: Campaign[] = [
     audiences: [],
     releases: [],
     entries: [],
+    utms: [
+      'utm_source=instagram&utm_medium=social&utm_campaign=smarthub_launch',
+      'utm_source=twitter&utm_medium=social&utm_campaign=smarthub_launch',
+      'utm_source=google&utm_medium=display&utm_campaign=smarthub_launch',
+      'utm_source=youtube&utm_medium=video&utm_campaign=smarthub_launch',
+    ],
     created_at: '2024-07-01T09:00:00Z',
     updated_at: '2024-08-15T11:00:00Z',
     created_by: 'mike.chen',

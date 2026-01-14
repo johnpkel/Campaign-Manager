@@ -1,0 +1,348 @@
+{
+  "content_type": {
+    "title": "(CS) Campaign Manager",
+    "uid": "cs_campaign_manager",
+    "description": "Content type for managing marketing campaigns with goals, channels, audiences, and tracking",
+    "schema": [
+      {
+        "display_name": "Title",
+        "uid": "title",
+        "data_type": "text",
+        "mandatory": true,
+        "unique": false,
+        "field_metadata": {
+          "description": "Campaign title"
+        }
+      },
+      {
+        "display_name": "Key Messages",
+        "uid": "key_messages",
+        "data_type": "json",
+        "field_metadata": {
+          "allow_json_rte": true,
+          "description": "Key messages and themes for the campaign"
+        }
+      },
+      {
+        "display_name": "Campaign Goals",
+        "uid": "campaign_goals",
+        "data_type": "json",
+        "field_metadata": {
+          "allow_json_rte": true,
+          "description": "Goals and objectives for the campaign"
+        }
+      },
+      {
+        "display_name": "Start Date",
+        "uid": "start_date",
+        "data_type": "isodate",
+        "mandatory": true,
+        "field_metadata": {
+          "description": "Campaign start date"
+        }
+      },
+      {
+        "display_name": "End Date",
+        "uid": "end_date",
+        "data_type": "isodate",
+        "mandatory": true,
+        "field_metadata": {
+          "description": "Campaign end date"
+        }
+      },
+      {
+        "display_name": "Contributors",
+        "uid": "contributors",
+        "data_type": "reference",
+        "reference_to": ["contributor"],
+        "multiple": true,
+        "field_metadata": {
+          "description": "Team members contributing to this campaign"
+        }
+      },
+      {
+        "display_name": "Budget",
+        "uid": "budget",
+        "data_type": "text",
+        "field_metadata": {
+          "description": "Campaign budget"
+        }
+      },
+      {
+        "display_name": "Status",
+        "uid": "status",
+        "data_type": "text",
+        "mandatory": true,
+        "enum": {
+          "advanced": false,
+          "choices": [
+            { "value": "planning" },
+            { "value": "draft" },
+            { "value": "content_creation" },
+            { "value": "review" },
+            { "value": "active" },
+            { "value": "paused" },
+            { "value": "completed" }
+          ]
+        },
+        "field_metadata": {
+          "description": "Current status of the campaign"
+        }
+      },
+      {
+        "display_name": "Channels",
+        "uid": "channels",
+        "data_type": "text",
+        "multiple": true,
+        "enum": {
+          "advanced": false,
+          "choices": [
+            { "value": "Web" },
+            { "value": "Native Mobile" },
+            { "value": "Social" },
+            { "value": "Ads" },
+            { "value": "Email" }
+          ]
+        },
+        "field_metadata": {
+          "description": "Distribution channels for the campaign"
+        }
+      },
+      {
+        "display_name": "Assets",
+        "uid": "assets",
+        "data_type": "file",
+        "multiple": true,
+        "field_metadata": {
+          "description": "Campaign assets (images, videos, documents)"
+        }
+      },
+      {
+        "display_name": "Milestones",
+        "uid": "timeline",
+        "data_type": "group",
+        "multiple": true,
+        "field_metadata": {
+          "description": "Campaign milestones and their status"
+        },
+        "schema": [
+          {
+            "display_name": "Milestone Name",
+            "uid": "milestone_name",
+            "data_type": "text",
+            "mandatory": true
+          },
+          {
+            "display_name": "Milestone Date",
+            "uid": "milestone_date",
+            "data_type": "isodate",
+            "mandatory": true
+          },
+          {
+            "display_name": "Status",
+            "uid": "status",
+            "data_type": "text",
+            "enum": {
+              "advanced": false,
+              "choices": [
+                { "value": "completed" },
+                { "value": "in_progress" },
+                { "value": "pending" }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "display_name": "Market Research",
+        "uid": "market_research",
+        "data_type": "json",
+        "field_metadata": {
+          "allow_json_rte": true,
+          "description": "Market research notes and findings"
+        }
+      },
+      {
+        "display_name": "Market Research Links",
+        "uid": "market_research_links",
+        "data_type": "group",
+        "multiple": true,
+        "field_metadata": {
+          "description": "Links to external market research resources"
+        },
+        "schema": [
+          {
+            "display_name": "Title",
+            "uid": "title",
+            "data_type": "text",
+            "mandatory": true
+          },
+          {
+            "display_name": "URL",
+            "uid": "url",
+            "data_type": "text",
+            "mandatory": true,
+            "format": "url"
+          }
+        ]
+      },
+      {
+        "display_name": "Brand Kit",
+        "uid": "brand_kit",
+        "data_type": "reference",
+        "reference_to": ["brand_kit"],
+        "multiple": true,
+        "field_metadata": {
+          "description": "Associated brand kits"
+        }
+      },
+      {
+        "display_name": "Voice Profile",
+        "uid": "voice_profile",
+        "data_type": "reference",
+        "reference_to": ["voice_profile"],
+        "multiple": true,
+        "field_metadata": {
+          "description": "Voice profiles for content tone and style"
+        }
+      },
+      {
+        "display_name": "Audiences",
+        "uid": "audiences",
+        "data_type": "group",
+        "multiple": true,
+        "field_metadata": {
+          "description": "Target audiences from Lytics"
+        },
+        "schema": [
+          {
+            "display_name": "Audience ID",
+            "uid": "id",
+            "data_type": "text",
+            "mandatory": true
+          },
+          {
+            "display_name": "Audience Name",
+            "uid": "name",
+            "data_type": "text",
+            "mandatory": true
+          },
+          {
+            "display_name": "Audience Count",
+            "uid": "count",
+            "data_type": "number"
+          }
+        ]
+      },
+      {
+        "display_name": "Releases",
+        "uid": "releases",
+        "data_type": "group",
+        "multiple": true,
+        "field_metadata": {
+          "description": "Associated Contentstack releases"
+        },
+        "schema": [
+          {
+            "display_name": "Release UID",
+            "uid": "uid",
+            "data_type": "text",
+            "mandatory": true
+          },
+          {
+            "display_name": "Release Name",
+            "uid": "name",
+            "data_type": "text",
+            "mandatory": true
+          }
+        ]
+      },
+      {
+        "display_name": "Entries",
+        "uid": "entries",
+        "data_type": "reference",
+        "reference_to": [],
+        "multiple": true,
+        "field_metadata": {
+          "description": "Content entries associated with this campaign",
+          "ref_multiple_content_types": true
+        }
+      },
+      {
+        "display_name": "UTMs",
+        "uid": "utms",
+        "data_type": "text",
+        "multiple": true,
+        "field_metadata": {
+          "description": "UTM tracking parameters for campaign URLs. Enter each UTM string separately (e.g., utm_source=email&utm_medium=newsletter&utm_campaign=summer_sale)"
+        }
+      },
+      {
+        "display_name": "Activity Timeline",
+        "uid": "activity_timeline",
+        "data_type": "group",
+        "multiple": true,
+        "field_metadata": {
+          "description": "Log of CMS activities performed on this campaign"
+        },
+        "schema": [
+          {
+            "display_name": "Activity Type",
+            "uid": "activity_type",
+            "data_type": "text",
+            "mandatory": true,
+            "enum": {
+              "advanced": false,
+              "choices": [
+                { "value": "campaign_created" },
+                { "value": "campaign_updated" },
+                { "value": "asset_uploaded" },
+                { "value": "entry_added" },
+                { "value": "entry_updated" },
+                { "value": "published" },
+                { "value": "audience_linked" },
+                { "value": "brand_kit_applied" },
+                { "value": "channel_added" },
+                { "value": "milestone_completed" },
+                { "value": "comment_added" }
+              ]
+            }
+          },
+          {
+            "display_name": "Activity Title",
+            "uid": "activity_title",
+            "data_type": "text",
+            "mandatory": true
+          },
+          {
+            "display_name": "Activity Description",
+            "uid": "activity_description",
+            "data_type": "text"
+          },
+          {
+            "display_name": "Activity Timestamp",
+            "uid": "activity_timestamp",
+            "data_type": "isodate",
+            "mandatory": true
+          },
+          {
+            "display_name": "Actor Name",
+            "uid": "actor_name",
+            "data_type": "text",
+            "mandatory": true
+          },
+          {
+            "display_name": "Actor Initials",
+            "uid": "actor_initials",
+            "data_type": "text"
+          }
+        ]
+      }
+    ],
+    "options": {
+      "is_page": false,
+      "singleton": false,
+      "title": "title"
+    }
+  }
+}

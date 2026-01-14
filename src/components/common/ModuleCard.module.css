@@ -25,6 +25,19 @@
   grid-column: 1 / -1;
 }
 
+.notClickable {
+  cursor: default;
+}
+
+.notClickable:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.notClickable:focus {
+  outline: none;
+}
+
 .header {
   display: flex;
   justify-content: space-between;

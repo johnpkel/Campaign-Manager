@@ -3,6 +3,7 @@ import { useExperience, MODULE_CONFIGS } from '../../experience';
 import { CampaignModuleCard, UpcomingCampaignsCard } from '../../modules/campaigns/components';
 import { AnalyticsModuleCard } from '../../modules/analytics/components';
 import { ActivityDigestCard } from '../../modules/collaboration/components';
+import { DailyDigestCard } from '../../modules/digest';
 import styles from './ExperienceDashboard.module.css';
 
 export function ExperienceDashboard() {
@@ -18,6 +19,14 @@ export function ExperienceDashboard() {
       </div>
 
       <div className={styles.grid}>
+        <ModuleCard
+          config={MODULE_CONFIGS.digest}
+          fullWidth
+          clickable={false}
+        >
+          <DailyDigestCard />
+        </ModuleCard>
+
         <ModuleCard
           config={MODULE_CONFIGS.campaigns}
           onClick={() => navigateToModule('campaigns')}

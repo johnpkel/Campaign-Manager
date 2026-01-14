@@ -1,4 +1,4 @@
-export type ModuleId = 'campaigns' | 'upcoming' | 'analytics' | 'collaboration';
+export type ModuleId = 'digest' | 'campaigns' | 'upcoming' | 'analytics' | 'collaboration';
 
 export interface ModuleConfig {
   id: ModuleId;
@@ -14,6 +14,13 @@ export interface ExperienceState {
 }
 
 export const MODULE_CONFIGS: Record<ModuleId, ModuleConfig> = {
+  digest: {
+    id: 'digest',
+    title: 'Daily Digest',
+    description: 'Your personalized daily briefing',
+    icon: 'Sun',
+    color: '#f59e0b',
+  },
   campaigns: {
     id: 'campaigns',
     title: 'Active Campaigns',

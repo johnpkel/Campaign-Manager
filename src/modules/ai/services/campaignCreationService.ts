@@ -4,11 +4,105 @@ import {
   CampaignCreationStep,
   CampaignDraft,
   AIContext,
+  LyticsAudience,
+  RecommendedPage,
+  CampaignTargetingRecommendations,
 } from '../types/ai';
 import {
   createAudienceInsightService,
   generateMockCampaignPerformance,
 } from './audienceInsightService';
+
+// Mock Lytics Audiences with member counts
+const MOCK_LYTICS_AUDIENCES: LyticsAudience[] = [
+  {
+    id: 'lytics-1',
+    name: 'High-Intent Shoppers',
+    description: 'Users who have viewed products multiple times and added items to cart',
+    memberCount: 45230,
+    matchScore: 95,
+  },
+  {
+    id: 'lytics-2',
+    name: 'Newsletter Subscribers',
+    description: 'Active email subscribers with high open rates',
+    memberCount: 128450,
+    matchScore: 88,
+  },
+  {
+    id: 'lytics-3',
+    name: 'Returning Customers',
+    description: 'Customers who have made 2+ purchases in the last 6 months',
+    memberCount: 32100,
+    matchScore: 82,
+  },
+  {
+    id: 'lytics-4',
+    name: 'Mobile App Users',
+    description: 'Users who have engaged with the mobile app in the last 30 days',
+    memberCount: 67800,
+    matchScore: 75,
+  },
+  {
+    id: 'lytics-5',
+    name: 'Social Media Engagers',
+    description: 'Users who have interacted with social content and clicked through',
+    memberCount: 89200,
+    matchScore: 70,
+  },
+];
+
+// Mock Website Pages (Contentstack entries)
+const MOCK_WEBSITE_PAGES: RecommendedPage[] = [
+  {
+    entryUid: 'blt_page_001',
+    title: 'Summer Collection Landing Page',
+    url: 'https://example.com/collections/summer-2024',
+    contentType: 'landing_page',
+    pageType: 'landing',
+    relevanceScore: 95,
+  },
+  {
+    entryUid: 'blt_page_002',
+    title: 'New Arrivals',
+    url: 'https://example.com/new-arrivals',
+    contentType: 'category_page',
+    pageType: 'category',
+    relevanceScore: 90,
+  },
+  {
+    entryUid: 'blt_page_003',
+    title: 'Product Spotlight: Smart Home Hub',
+    url: 'https://example.com/products/smart-home-hub',
+    contentType: 'product_page',
+    pageType: 'product',
+    relevanceScore: 88,
+  },
+  {
+    entryUid: 'blt_page_004',
+    title: 'Getting Started Guide',
+    url: 'https://example.com/blog/getting-started-guide',
+    contentType: 'blog_post',
+    pageType: 'blog',
+    relevanceScore: 78,
+  },
+  {
+    entryUid: 'blt_page_005',
+    title: 'Homepage',
+    url: 'https://example.com/',
+    contentType: 'homepage',
+    pageType: 'homepage',
+    relevanceScore: 75,
+  },
+  {
+    entryUid: 'blt_page_006',
+    title: 'Special Offers',
+    url: 'https://example.com/offers',
+    contentType: 'landing_page',
+    pageType: 'landing',
+    relevanceScore: 85,
+  },
+];
 
 const MOCK_BRAND_KITS = [
   { id: 'bk-1', name: 'Primary Brand' },
@@ -205,12 +299,101 @@ const STEP_QUESTIONS: Record<CampaignCreationStep, (draft: Partial<CampaignDraft
     msg += `**Channels:** ${draft.channels?.join(', ') || 'Not set'}\n`;
     msg += `**Market Research:** ${draft.marketResearch || 'None linked'}\n`;
     msg += `**Brand Kit:** ${draft.brandKit || 'Not selected'}\n\n`;
-    msg += `Does this look correct? Say **"Create campaign"** to finalize, or tell me what you'd like to change.`;
+    msg += `Does this look correct? Say **"Looks good"** to continue, or tell me what you'd like to change.`;
+    return msg;
+  },
+
+  audience_page_recommendations: (draft) => {
+    // Get recommendations based on campaign draft
+    const audiences = getRecommendedAudiences(draft);
+    const pages = getRecommendedPages(draft);
+
+    let msg = `**Great! Before we create the campaign, let me recommend some targeting options.**\n\n`;
+
+    msg += `**Recommended Lytics Audiences:**\n`;
+    audiences.forEach((audience, index) => {
+      msg += `${index + 1}. **${audience.name}** - ${audience.memberCount.toLocaleString()} members (${audience.matchScore}% match)\n`;
+      msg += `   _${audience.description}_\n\n`;
+    });
+
+    msg += `\n**Recommended Pages to Publish To:**\n`;
+    pages.forEach((page, index) => {
+      msg += `${index + 1}. **${page.title}**\n`;
+      msg += `   ${page.url}\n`;
+      msg += `   _${page.pageType} page - ${page.relevanceScore}% relevance_\n\n`;
+    });
+
+    msg += `\nWhich audiences and pages would you like to target? You can:\n`;
+    msg += `- Say **"All"** to use all recommendations\n`;
+    msg += `- List specific numbers (e.g., "Audiences 1, 2 and Pages 1, 3")\n`;
+    msg += `- Say **"Skip"** to proceed without targeting`;
+
+    return msg;
+  },
+
+  variant_confirmation: (draft) => {
+    const targeting = draft.targetingRecommendations;
+    const selectedPages = targeting?.selectedPages || [];
+    const selectedAudiences = targeting?.selectedAudiences || [];
+
+    let msg = `**Perfect! You've selected:**\n\n`;
+
+    if (selectedAudiences.length > 0) {
+      msg += `**Audiences:** ${selectedAudiences.map(a => a.name).join(', ')}\n`;
+      msg += `_Total reach: ${selectedAudiences.reduce((sum, a) => sum + a.memberCount, 0).toLocaleString()} members_\n\n`;
+    }
+
+    if (selectedPages.length > 0) {
+      msg += `**Target Pages:**\n`;
+      selectedPages.forEach(page => {
+        msg += `- ${page.title} (${page.url})\n`;
+      });
+      msg += `\n`;
+    }
+
+    if (selectedPages.length > 0 && selectedAudiences.length > 0) {
+      msg += `**Would you like me to automatically create Variants for each of these pages?**\n\n`;
+      msg += `This will create ${selectedPages.length} variant${selectedPages.length > 1 ? 's' : ''} for ${selectedAudiences.length} audience${selectedAudiences.length > 1 ? 's' : ''} `;
+      msg += `(${selectedPages.length * selectedAudiences.length} total variants).\n\n`;
+      msg += `Each variant will be personalized for the target audience with tailored messaging based on your campaign goals.\n\n`;
+      msg += `Say **"Yes, create variants"** to proceed, or **"No, just create the campaign"** to skip variant creation.`;
+    } else {
+      msg += `Ready to create the campaign. Say **"Create campaign"** to finalize.`;
+    }
+
     return msg;
   },
 
   complete: (draft) => {
-    return `**Campaign "${draft.title}" has been created!**\n\nYour new campaign is now set up and ready to go. You can:\n- View it in the Campaign Manager\n- Start adding content and assets\n- Invite team members to collaborate\n\nIs there anything else you'd like help with?`;
+    const targeting = draft.targetingRecommendations;
+    const createdVariants = targeting?.createVariants && targeting.selectedPages && targeting.selectedAudiences;
+
+    let msg = `**Campaign "${draft.title}" has been created!**\n\n`;
+
+    if (createdVariants) {
+      const variantCount = (targeting.selectedPages?.length || 0) * (targeting.selectedAudiences?.length || 0);
+      msg += `**${variantCount} variants have been created** for your target audiences.\n\n`;
+      msg += `**Variants created for:**\n`;
+      targeting.selectedPages?.forEach(page => {
+        msg += `- ${page.title}\n`;
+      });
+      msg += `\n**Targeting audiences:**\n`;
+      targeting.selectedAudiences?.forEach(audience => {
+        msg += `- ${audience.name} (${audience.memberCount.toLocaleString()} members)\n`;
+      });
+      msg += `\n`;
+    }
+
+    msg += `Your new campaign is now set up and ready to go. You can:\n`;
+    msg += `- View it in the Campaign Manager\n`;
+    msg += `- Start adding content and assets\n`;
+    if (createdVariants) {
+      msg += `- Review and customize the generated variants\n`;
+    }
+    msg += `- Invite team members to collaborate\n\n`;
+    msg += `Is there anything else you'd like help with?`;
+
+    return msg;
   },
 };
 
@@ -227,8 +410,69 @@ const STEP_ORDER: CampaignCreationStep[] = [
   'market_research',
   'brand_kit',
   'review',
+  'audience_page_recommendations',
+  'variant_confirmation',
   'complete',
 ];
+
+// Helper function to get recommended audiences based on campaign draft
+function getRecommendedAudiences(draft: Partial<CampaignDraft>): LyticsAudience[] {
+  // In a real implementation, this would call Lytics API and filter based on campaign criteria
+  // For now, return mock data sorted by match score
+  let audiences = [...MOCK_LYTICS_AUDIENCES];
+
+  // Adjust match scores based on campaign channels
+  if (draft.channels) {
+    audiences = audiences.map(audience => {
+      let scoreBoost = 0;
+      if (draft.channels?.includes('Email') && audience.name.includes('Newsletter')) {
+        scoreBoost += 10;
+      }
+      if (draft.channels?.includes('Native Mobile') && audience.name.includes('Mobile')) {
+        scoreBoost += 10;
+      }
+      if (draft.channels?.includes('Social') && audience.name.includes('Social')) {
+        scoreBoost += 10;
+      }
+      return {
+        ...audience,
+        matchScore: Math.min(100, audience.matchScore + scoreBoost),
+      };
+    });
+  }
+
+  return audiences.sort((a, b) => b.matchScore - a.matchScore).slice(0, 5);
+}
+
+// Helper function to get recommended pages based on campaign draft
+function getRecommendedPages(draft: Partial<CampaignDraft>): RecommendedPage[] {
+  // In a real implementation, this would fetch from Contentstack and score relevance
+  // For now, return mock data sorted by relevance score
+  let pages = [...MOCK_WEBSITE_PAGES];
+
+  // Adjust relevance based on campaign type (inferred from title/messages)
+  const title = (draft.title || '').toLowerCase();
+  const messages = (draft.keyMessages || '').toLowerCase();
+
+  pages = pages.map(page => {
+    let scoreBoost = 0;
+    if ((title.includes('product') || title.includes('launch')) && page.pageType === 'product') {
+      scoreBoost += 15;
+    }
+    if ((title.includes('sale') || title.includes('offer') || title.includes('promo')) && page.pageType === 'landing') {
+      scoreBoost += 15;
+    }
+    if (messages.includes('blog') || messages.includes('content') && page.pageType === 'blog') {
+      scoreBoost += 10;
+    }
+    return {
+      ...page,
+      relevanceScore: Math.min(100, page.relevanceScore + scoreBoost),
+    };
+  });
+
+  return pages.sort((a, b) => b.relevanceScore - a.relevanceScore).slice(0, 5);
+}
 
 export function getNextStep(currentStep: CampaignCreationStep): CampaignCreationStep {
   const currentIndex = STEP_ORDER.indexOf(currentStep);
@@ -327,8 +571,101 @@ export function parseUserResponse(
       break;
 
     case 'review':
-      // Handle confirmation or changes
+      // Handle confirmation or changes - "looks good" moves to next step
       break;
+
+    case 'audience_page_recommendations': {
+      // Parse the user's selection of audiences and pages
+      const audiences = getRecommendedAudiences(draft);
+      const pages = getRecommendedPages(draft);
+
+      if (lowerMessage === 'all') {
+        // Select all recommendations
+        draft.targetingRecommendations = {
+          audiences,
+          pages,
+          selectedAudiences: audiences,
+          selectedPages: pages,
+        };
+      } else if (lowerMessage === 'skip') {
+        // Skip targeting
+        draft.targetingRecommendations = {
+          audiences,
+          pages,
+          selectedAudiences: [],
+          selectedPages: [],
+        };
+      } else {
+        // Parse specific selections like "Audiences 1, 2 and Pages 1, 3"
+        const selectedAudiences: LyticsAudience[] = [];
+        const selectedPages: RecommendedPage[] = [];
+
+        // Extract audience numbers
+        const audienceMatch = lowerMessage.match(/audience[s]?\s*([\d,\s]+)/i);
+        if (audienceMatch) {
+          const audienceNums = audienceMatch[1].match(/\d+/g) || [];
+          audienceNums.forEach(num => {
+            const index = parseInt(num) - 1;
+            if (index >= 0 && index < audiences.length) {
+              selectedAudiences.push(audiences[index]);
+            }
+          });
+        }
+
+        // Extract page numbers
+        const pageMatch = lowerMessage.match(/page[s]?\s*([\d,\s]+)/i);
+        if (pageMatch) {
+          const pageNums = pageMatch[1].match(/\d+/g) || [];
+          pageNums.forEach(num => {
+            const index = parseInt(num) - 1;
+            if (index >= 0 && index < pages.length) {
+              selectedPages.push(pages[index]);
+            }
+          });
+        }
+
+        // If no specific pattern matched, try to find numbers and assign them
+        if (selectedAudiences.length === 0 && selectedPages.length === 0) {
+          const allNums = lowerMessage.match(/\d+/g) || [];
+          // Assume first half are audiences, second half are pages
+          const halfIndex = Math.ceil(allNums.length / 2);
+          allNums.slice(0, halfIndex).forEach(num => {
+            const index = parseInt(num) - 1;
+            if (index >= 0 && index < audiences.length) {
+              selectedAudiences.push(audiences[index]);
+            }
+          });
+          allNums.slice(halfIndex).forEach(num => {
+            const index = parseInt(num) - 1;
+            if (index >= 0 && index < pages.length) {
+              selectedPages.push(pages[index]);
+            }
+          });
+        }
+
+        draft.targetingRecommendations = {
+          audiences,
+          pages,
+          selectedAudiences: selectedAudiences.length > 0 ? selectedAudiences : audiences.slice(0, 2),
+          selectedPages: selectedPages.length > 0 ? selectedPages : pages.slice(0, 2),
+        };
+      }
+      break;
+    }
+
+    case 'variant_confirmation': {
+      // Handle variant creation confirmation
+      if (lowerMessage.includes('yes') || lowerMessage.includes('create variant')) {
+        if (draft.targetingRecommendations) {
+          draft.targetingRecommendations.createVariants = true;
+        }
+      } else {
+        if (draft.targetingRecommendations) {
+          draft.targetingRecommendations.createVariants = false;
+        }
+      }
+      break;
+    }
   }
 
   return { draft, isValid: true };
@@ -374,16 +711,22 @@ export function createCampaignCreationMessage(
   recommendations?: CampaignRecommendation[],
   draft?: Partial<CampaignDraft>
 ): AIMessage {
+  const isTargetingStep = step === 'audience_page_recommendations' || step === 'variant_confirmation';
+
   return {
     id: `ai-msg-${Date.now()}`,
     role: 'assistant',
     content,
     timestamp: new Date().toISOString(),
     metadata: {
-      type: step === 'recommendations' ? 'recommendation' : 'question',
+      type: step === 'recommendations' ? 'recommendation' : (isTargetingStep ? 'targeting' : 'question'),
       recommendations,
       questionType: step,
       campaignDraft: draft,
+      targetingRecommendations: draft?.targetingRecommendations,
     },
   };
 }
+
+// Export helper functions for getting recommendations
+export { getRecommendedAudiences, getRecommendedPages };

@@ -10,6 +10,7 @@ import {
 
 export function calculateMetrics(campaigns: Campaign[]): CampaignMetrics {
   const campaignsByStatus: Record<CampaignStatus, number> = {
+    planning: 0,
     draft: 0,
     content_creation: 0,
     review: 0,

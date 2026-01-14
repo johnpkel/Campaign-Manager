@@ -180,11 +180,14 @@ export class ContentstackCampaignService implements ICampaignService {
       assets: entry.assets || [],
       timeline: entry.timeline || [],
       market_research: entry.market_research,
+      market_research_links: entry.market_research_links || [],
       brand_kit: entry.brand_kit || [],
       voice_profile: entry.voice_profile || [],
       audiences: entry.audiences || [],
       releases: entry.releases || [],
       entries: entry.entries || [],
+      utms: entry.utms || [],
+      activity_timeline: entry.activity_timeline || [],
       created_at: entry.created_at || new Date().toISOString(),
       updated_at: entry.updated_at || new Date().toISOString(),
       created_by: entry.created_by || '',
@@ -207,6 +210,8 @@ export class ContentstackCampaignService implements ICampaignService {
       assets: data.assets,
       timeline: data.timeline,
       market_research: data.market_research,
+      utms: data.utms,
+      activity_timeline: data.activity_timeline,
     };
   }
 }
@@ -215,12 +220,18 @@ export class ContentstackCampaignService implements ICampaignService {
 export function createCampaignService(isStandaloneMode: boolean): ICampaignService {
   const { apiKey, managementToken } = getCredentials();
 
-  // Use mock service in standalone mode or if credentials are missing
-  if (isStandaloneMode || !apiKey || !managementToken) {
-    console.info('Using mock campaign service');
-    return new MockCampaignService();
+  // Use Contentstack API if credentials are available, even in standalone mode
+  // This allows local development to fetch real data from Contentstack
+  if (apiKey && managementToken) {
+    console.info('Using Contentstack API campaign service');
+    return new ContentstackCampaignService(apiKey, managementToken);
   }
 
-  console.info('Using Contentstack API campaign service');
-  return new ContentstackCampaignService(apiKey, managementToken);
+  // Fall back to mock service only if credentials are missing
+  if (isStandaloneMode) {
+    console.info('Using mock campaign service (standalone mode, no credentials)');
+  } else {
+    console.info('Using mock campaign service (missing API credentials)');
+  }
+  return new MockCampaignService();
 }

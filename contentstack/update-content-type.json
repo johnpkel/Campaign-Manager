@@ -1,0 +1,357 @@
+{
+  "content_type": {
+    "title": "(CS) Campaign Manager",
+    "uid": "cs_campaign_manager",
+    "schema": [
+      {
+        "display_name": "Campaign Title",
+        "uid": "title",
+        "data_type": "text",
+        "field_metadata": {
+          "instruction": "Enter the campaign name",
+          "_default": true,
+          "version": 3
+        },
+        "mandatory": true,
+        "unique": true,
+        "multiple": false,
+        "non_localizable": false
+      },
+      {
+        "display_name": "Key Messages/Themes",
+        "uid": "key_messages",
+        "data_type": "json",
+        "field_metadata": {
+          "allow_json_rte": true,
+          "rich_text_type": "advanced",
+          "instruction": "Enter the key messages and themes for this campaign"
+        },
+        "reference_to": ["sys_assets"],
+        "multiple": false,
+        "mandatory": false,
+        "unique": false,
+        "non_localizable": false
+      },
+      {
+        "display_name": "Campaign Goals",
+        "uid": "campaign_goals",
+        "data_type": "json",
+        "field_metadata": {
+          "allow_json_rte": true,
+          "rich_text_type": "advanced",
+          "instruction": "Define the campaign objectives and goals"
+        },
+        "reference_to": ["sys_assets"],
+        "multiple": false,
+        "mandatory": false,
+        "unique": false,
+        "non_localizable": false
+      },
+      {
+        "display_name": "Campaign Start Date",
+        "uid": "start_date",
+        "data_type": "isodate",
+        "field_metadata": {
+          "instruction": "When does this campaign begin?"
+        },
+        "mandatory": true,
+        "multiple": false,
+        "unique": false,
+        "non_localizable": false
+      },
+      {
+        "display_name": "Campaign End Date",
+        "uid": "end_date",
+        "data_type": "isodate",
+        "field_metadata": {
+          "instruction": "When does this campaign end?"
+        },
+        "mandatory": true,
+        "multiple": false,
+        "unique": false,
+        "non_localizable": false
+      },
+      {
+        "display_name": "Budget",
+        "uid": "budget",
+        "data_type": "text",
+        "field_metadata": {
+          "instruction": "Enter the campaign budget (e.g., $50,000)",
+          "version": 3
+        },
+        "multiple": false,
+        "mandatory": false,
+        "unique": false,
+        "non_localizable": false
+      },
+      {
+        "display_name": "Status",
+        "uid": "status",
+        "data_type": "text",
+        "display_type": "dropdown",
+        "enum": {
+          "advanced": false,
+          "choices": [
+            { "value": "planning" },
+            { "value": "draft" },
+            { "value": "content_creation" },
+            { "value": "review" },
+            { "value": "active" },
+            { "value": "paused" },
+            { "value": "completed" }
+          ]
+        },
+        "field_metadata": {
+          "instruction": "Current campaign status",
+          "version": 3
+        },
+        "mandatory": true,
+        "multiple": false,
+        "unique": false,
+        "non_localizable": false
+      },
+      {
+        "display_name": "Channels",
+        "uid": "channels",
+        "data_type": "text",
+        "display_type": "checkbox",
+        "multiple": true,
+        "enum": {
+          "advanced": false,
+          "choices": [
+            { "value": "Web" },
+            { "value": "Native Mobile" },
+            { "value": "Social" },
+            { "value": "Ads" },
+            { "value": "Email" }
+          ]
+        },
+        "field_metadata": {
+          "instruction": "Select all applicable campaign channels",
+          "version": 3
+        },
+        "mandatory": false,
+        "unique": false,
+        "non_localizable": false
+      },
+      {
+        "display_name": "UTMs",
+        "uid": "utms",
+        "data_type": "text",
+        "multiple": true,
+        "field_metadata": {
+          "instruction": "Enter UTM tracking parameters for campaign URLs. Add each UTM string separately (e.g., utm_source=email&utm_medium=newsletter&utm_campaign=summer_sale)",
+          "version": 3
+        },
+        "mandatory": false,
+        "unique": false,
+        "non_localizable": false
+      },
+      {
+        "display_name": "Milestones",
+        "uid": "timeline",
+        "data_type": "group",
+        "multiple": true,
+        "field_metadata": {
+          "instruction": "Add campaign milestones and track their progress",
+          "version": 3
+        },
+        "schema": [
+          {
+            "display_name": "Milestone Name",
+            "uid": "milestone_name",
+            "data_type": "text",
+            "field_metadata": {
+              "instruction": "Name of the milestone",
+              "version": 3
+            },
+            "mandatory": true,
+            "multiple": false,
+            "unique": false,
+            "non_localizable": false
+          },
+          {
+            "display_name": "Milestone Date",
+            "uid": "milestone_date",
+            "data_type": "isodate",
+            "field_metadata": {
+              "instruction": "Target date for the milestone"
+            },
+            "mandatory": true,
+            "multiple": false,
+            "unique": false,
+            "non_localizable": false
+          },
+          {
+            "display_name": "Status",
+            "uid": "status",
+            "data_type": "text",
+            "display_type": "dropdown",
+            "enum": {
+              "advanced": false,
+              "choices": [
+                { "value": "pending" },
+                { "value": "in_progress" },
+                { "value": "completed" }
+              ]
+            },
+            "field_metadata": {
+              "instruction": "Current status of this milestone",
+              "version": 3
+            },
+            "mandatory": false,
+            "multiple": false,
+            "unique": false,
+            "non_localizable": false
+          }
+        ],
+        "mandatory": false,
+        "unique": false,
+        "non_localizable": false
+      },
+      {
+        "display_name": "Activity Timeline",
+        "uid": "activity_timeline",
+        "data_type": "group",
+        "multiple": true,
+        "field_metadata": {
+          "instruction": "Log of CMS activities performed on this campaign. This tracks changes, updates, and collaboration history.",
+          "version": 3
+        },
+        "schema": [
+          {
+            "display_name": "Activity Type",
+            "uid": "activity_type",
+            "data_type": "text",
+            "display_type": "dropdown",
+            "enum": {
+              "advanced": false,
+              "choices": [
+                { "value": "campaign_created" },
+                { "value": "campaign_updated" },
+                { "value": "asset_uploaded" },
+                { "value": "entry_added" },
+                { "value": "entry_updated" },
+                { "value": "published" },
+                { "value": "audience_linked" },
+                { "value": "brand_kit_applied" },
+                { "value": "channel_added" },
+                { "value": "milestone_completed" },
+                { "value": "comment_added" }
+              ]
+            },
+            "field_metadata": {
+              "instruction": "Type of activity performed",
+              "version": 3
+            },
+            "mandatory": true,
+            "multiple": false,
+            "unique": false,
+            "non_localizable": false
+          },
+          {
+            "display_name": "Activity Title",
+            "uid": "activity_title",
+            "data_type": "text",
+            "field_metadata": {
+              "instruction": "Brief title describing the activity",
+              "version": 3
+            },
+            "mandatory": true,
+            "multiple": false,
+            "unique": false,
+            "non_localizable": false
+          },
+          {
+            "display_name": "Activity Description",
+            "uid": "activity_description",
+            "data_type": "text",
+            "field_metadata": {
+              "instruction": "Detailed description of the activity",
+              "version": 3
+            },
+            "mandatory": false,
+            "multiple": false,
+            "unique": false,
+            "non_localizable": false
+          },
+          {
+            "display_name": "Activity Timestamp",
+            "uid": "activity_timestamp",
+            "data_type": "isodate",
+            "field_metadata": {
+              "instruction": "When this activity occurred"
+            },
+            "mandatory": true,
+            "multiple": false,
+            "unique": false,
+            "non_localizable": false
+          },
+          {
+            "display_name": "Actor Name",
+            "uid": "actor_name",
+            "data_type": "text",
+            "field_metadata": {
+              "instruction": "Name of the person who performed this activity",
+              "version": 3
+            },
+            "mandatory": true,
+            "multiple": false,
+            "unique": false,
+            "non_localizable": false
+          },
+          {
+            "display_name": "Actor Initials",
+            "uid": "actor_initials",
+            "data_type": "text",
+            "field_metadata": {
+              "instruction": "Initials of the person (e.g., JD for John Doe)",
+              "version": 3
+            },
+            "mandatory": false,
+            "multiple": false,
+            "unique": false,
+            "non_localizable": false
+          }
+        ],
+        "mandatory": false,
+        "unique": false,
+        "non_localizable": false
+      },
+      {
+        "display_name": "Market Research",
+        "uid": "market_research",
+        "data_type": "json",
+        "field_metadata": {
+          "allow_json_rte": true,
+          "rich_text_type": "advanced",
+          "instruction": "Add market research notes and URLs"
+        },
+        "reference_to": ["sys_assets"],
+        "multiple": false,
+        "mandatory": false,
+        "unique": false,
+        "non_localizable": false
+      },
+      {
+        "display_name": "Contentstack Assets",
+        "uid": "assets",
+        "data_type": "file",
+        "multiple": true,
+        "field_metadata": {
+          "instruction": "Upload campaign assets and media files"
+        },
+        "mandatory": false,
+        "unique": false,
+        "non_localizable": false
+      }
+    ],
+    "options": {
+      "title": "title",
+      "publishable": true,
+      "is_page": false,
+      "singleton": false,
+      "sub_title": ["status"]
+    }
+  }
+}

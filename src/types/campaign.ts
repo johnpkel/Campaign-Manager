@@ -1,4 +1,4 @@
-export type CampaignStatus = 'draft' | 'content_creation' | 'review' | 'active' | 'paused' | 'completed';
+export type CampaignStatus = 'planning' | 'draft' | 'content_creation' | 'review' | 'active' | 'paused' | 'completed';
 
 export type CampaignChannel = 'Web' | 'Native Mobile' | 'Social' | 'Ads' | 'Email';
 
@@ -84,6 +84,29 @@ export interface MarketResearchLink {
   url: string;
 }
 
+// Activity Timeline entry (for CMS activity tracking)
+export type ActivityType =
+  | 'campaign_created'
+  | 'campaign_updated'
+  | 'asset_uploaded'
+  | 'entry_added'
+  | 'entry_updated'
+  | 'published'
+  | 'audience_linked'
+  | 'brand_kit_applied'
+  | 'channel_added'
+  | 'milestone_completed'
+  | 'comment_added';
+
+export interface CampaignActivity {
+  activity_type: ActivityType;
+  activity_title: string;
+  activity_description: string;
+  activity_timestamp: string;
+  actor_name: string;
+  actor_initials: string;
+}
+
 // Main Campaign interface matching Contentstack entry structure
 export interface Campaign {
   uid: string;
@@ -106,6 +129,10 @@ export interface Campaign {
   audiences?: AudienceReference[];
   releases?: ReleaseReference[];
   entries?: EntryReference[];
+  // UTM tracking parameters (multiple single-line text)
+  utms?: string[];
+  // Activity timeline for CMS activity tracking
+  activity_timeline?: CampaignActivity[];
   // System fields
   created_at: string;
   updated_at: string;
@@ -134,6 +161,10 @@ export interface CampaignFormData {
   audiences?: AudienceReference[];
   releases?: ReleaseReference[];
   entries?: EntryReference[];
+  // UTM tracking parameters
+  utms?: string[];
+  // Activity timeline
+  activity_timeline?: CampaignActivity[];
 }
 
 export interface CampaignMetrics {
@@ -144,6 +175,7 @@ export interface CampaignMetrics {
 }
 
 export const CAMPAIGN_STATUS_LABELS: Record<CampaignStatus, string> = {
+  planning: 'Planning',
   draft: 'Draft',
   content_creation: 'Content Creation',
   review: 'Review',
@@ -161,6 +193,7 @@ export const CAMPAIGN_CHANNEL_LABELS: Record<CampaignChannel, string> = {
 };
 
 export const CAMPAIGN_STATUS_COLORS: Record<CampaignStatus, string> = {
+  planning: '#3b82f6',
   draft: '#64748b',
   content_creation: '#8b5cf6',
   review: '#f59e0b',
@@ -169,6 +202,6 @@ export const CAMPAIGN_STATUS_COLORS: Record<CampaignStatus, string> = {
   completed: '#6366f1',
 };
 
-export const ALL_CAMPAIGN_STATUSES: CampaignStatus[] = ['draft', 'content_creation', 'review', 'active', 'paused', 'completed'];
+export const ALL_CAMPAIGN_STATUSES: CampaignStatus[] = ['planning', 'draft', 'content_creation', 'review', 'active', 'paused', 'completed'];
 
 export const ALL_CAMPAIGN_CHANNELS: CampaignChannel[] = ['Web', 'Native Mobile', 'Social', 'Ads', 'Email'];

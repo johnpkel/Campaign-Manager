@@ -317,6 +317,49 @@
   color: #94a3b8;
 }
 
+/* UTM Parameters */
+.utmList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.utmItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  background: #f8fafc;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.utmCode {
+  font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+  font-size: 13px;
+  color: #475569;
+  word-break: break-all;
+  flex: 1;
+}
+
+.utmCopyButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  opacity: 0.6;
+  transition: opacity 0.2s, background 0.2s;
+  flex-shrink: 0;
+}
+
+.utmCopyButton:hover {
+  opacity: 1;
+  background: #e2e8f0;
+}
+
 /* Market Research */
 .researchLinks {
   display: flex;
@@ -334,14 +377,14 @@
   color: #4f46e5;
 }
 
-/* Timeline */
-.timeline {
+/* Milestones */
+.milestones {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.timelineItem {
+.milestoneItem {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -349,17 +392,17 @@
   border-bottom: 1px solid #f1f5f9;
 }
 
-.timelineItem:last-child {
+.milestoneItem:last-child {
   border-bottom: none;
 }
 
-.timelineLeft {
+.milestoneLeft {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.timelineStatus {
+.milestoneStatus {
   width: 20px;
   height: 20px;
   border-radius: 50%;
@@ -388,7 +431,7 @@
   color: #cbd5e1;
 }
 
-.timelineContent {
+.milestoneContent {
   display: flex;
   flex-direction: column;
   gap: 2px;

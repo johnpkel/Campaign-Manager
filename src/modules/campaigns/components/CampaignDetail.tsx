@@ -6,6 +6,8 @@ import {
   CAMPAIGN_STATUS_COLORS,
   CAMPAIGN_CHANNEL_LABELS,
 } from '../types/campaign';
+import { CampaignPerformanceHighlights } from './CampaignPerformanceHighlights';
+import { CampaignActivityTimeline } from './CampaignActivityTimeline';
 import styles from './CampaignDetail.module.css';
 
 interface CampaignDetailProps {
@@ -103,6 +105,11 @@ export function CampaignDetail({ campaign, onEdit, onBack }: CampaignDetailProps
           )}
         </div>
       </div>
+
+      {/* Performance Highlights */}
+      {(campaign.status === 'active' || campaign.status === 'completed') && (
+        <CampaignPerformanceHighlights campaign={campaign} />
+      )}
 
       {/* Key Messages & Goals */}
       <section className={styles.section}>
@@ -232,6 +239,32 @@ export function CampaignDetail({ campaign, onEdit, onBack }: CampaignDetailProps
         </div>
       </section>
 
+      {/* UTMs */}
+      {campaign.utms && campaign.utms.length > 0 && (
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>
+            <span className={styles.sectionIcon}>🔗</span>
+            UTM Parameters
+          </h2>
+          <div className={styles.card}>
+            <div className={styles.utmList}>
+              {campaign.utms.map((utm, index) => (
+                <div key={index} className={styles.utmItem}>
+                  <span className={styles.utmCode}>{utm}</span>
+                  <button
+                    className={styles.utmCopyButton}
+                    onClick={() => navigator.clipboard.writeText(utm)}
+                    title="Copy to clipboard"
+                  >
+                    📋
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Market Research */}
       {(campaign.market_research_links && campaign.market_research_links.length > 0) && (
         <section className={styles.section}>
@@ -249,21 +282,21 @@ export function CampaignDetail({ campaign, onEdit, onBack }: CampaignDetailProps
         </section>
       )}
 
-      {/* Timeline */}
+      {/* Milestones */}
       {campaign.timeline && campaign.timeline.length > 0 && (
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Timeline</h2>
+          <h2 className={styles.sectionTitle}>Milestones</h2>
           <div className={styles.card}>
-            <div className={styles.timeline}>
+            <div className={styles.milestones}>
               {campaign.timeline.map((milestone, index) => (
-                <div key={index} className={styles.timelineItem}>
-                  <div className={styles.timelineLeft}>
-                    <span className={`${styles.timelineStatus} ${styles[`status_${milestone.status}`]}`}>
+                <div key={index} className={styles.milestoneItem}>
+                  <div className={styles.milestoneLeft}>
+                    <span className={`${styles.milestoneStatus} ${styles[`status_${milestone.status}`]}`}>
                       {milestone.status === 'completed' && '✓'}
                       {milestone.status === 'in_progress' && '○'}
                       {milestone.status === 'pending' && '○'}
                     </span>
-                    <div className={styles.timelineContent}>
+                    <div className={styles.milestoneContent}>
                       <span className={styles.milestoneName}>{milestone.milestone_name}</span>
                       <span className={styles.milestoneStatusLabel}>
                         {milestone.status === 'completed' && 'Completed'}
@@ -279,6 +312,17 @@ export function CampaignDetail({ campaign, onEdit, onBack }: CampaignDetailProps
           </div>
         </section>
       )}
+
+      {/* Activity Timeline */}
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>
+          <span className={styles.sectionIcon}>📋</span>
+          Activity Timeline
+        </h2>
+        <div className={styles.card}>
+          <CampaignActivityTimeline campaign={campaign} />
+        </div>
+      </section>
 
       {/* Contributors */}
       {campaign.contributors && campaign.contributors.length > 0 && (

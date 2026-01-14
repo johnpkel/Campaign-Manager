@@ -188,6 +188,7 @@ export class ContentstackCampaignService implements ICampaignService {
       entries: entry.entries || [],
       utms: entry.utms || [],
       activity_timeline: entry.activity_timeline || [],
+      success_indicators: entry.success_indicators || [],
       created_at: entry.created_at || new Date().toISOString(),
       updated_at: entry.updated_at || new Date().toISOString(),
       created_by: entry.created_by || '',
@@ -212,6 +213,7 @@ export class ContentstackCampaignService implements ICampaignService {
       market_research: data.market_research,
       utms: data.utms,
       activity_timeline: data.activity_timeline,
+      success_indicators: data.success_indicators,
     };
   }
 }

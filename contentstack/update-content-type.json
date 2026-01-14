@@ -319,6 +319,84 @@
         "non_localizable": false
       },
       {
+        "display_name": "Success Indicators",
+        "uid": "success_indicators",
+        "data_type": "group",
+        "multiple": true,
+        "field_metadata": {
+          "instruction": "Define key performance indicators (KPIs) and success metrics for this campaign",
+          "version": 3
+        },
+        "schema": [
+          {
+            "display_name": "Indicator Name",
+            "uid": "indicator_name",
+            "data_type": "text",
+            "field_metadata": {
+              "instruction": "Name of the KPI or success metric (e.g., 'Website Traffic Increase', 'Lead Generation')",
+              "version": 3
+            },
+            "mandatory": true,
+            "multiple": false,
+            "unique": false,
+            "non_localizable": false
+          },
+          {
+            "display_name": "Target Value",
+            "uid": "target_value",
+            "data_type": "text",
+            "field_metadata": {
+              "instruction": "Target value to achieve (e.g., '25%', '500 leads', '$100,000')",
+              "version": 3
+            },
+            "mandatory": true,
+            "multiple": false,
+            "unique": false,
+            "non_localizable": false
+          },
+          {
+            "display_name": "Current Value",
+            "uid": "current_value",
+            "data_type": "text",
+            "field_metadata": {
+              "instruction": "Current progress value (update as campaign progresses)",
+              "version": 3
+            },
+            "mandatory": false,
+            "multiple": false,
+            "unique": false,
+            "non_localizable": false
+          },
+          {
+            "display_name": "Status",
+            "uid": "status",
+            "data_type": "text",
+            "display_type": "dropdown",
+            "enum": {
+              "advanced": false,
+              "choices": [
+                { "value": "pending" },
+                { "value": "on_track" },
+                { "value": "at_risk" },
+                { "value": "achieved" },
+                { "value": "missed" }
+              ]
+            },
+            "field_metadata": {
+              "instruction": "Current status of this success indicator",
+              "version": 3
+            },
+            "mandatory": true,
+            "multiple": false,
+            "unique": false,
+            "non_localizable": false
+          }
+        ],
+        "mandatory": false,
+        "unique": false,
+        "non_localizable": false
+      },
+      {
         "display_name": "Market Research",
         "uid": "market_research",
         "data_type": "json",

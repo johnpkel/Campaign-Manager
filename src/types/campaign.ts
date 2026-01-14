@@ -84,6 +84,17 @@ export interface MarketResearchLink {
   url: string;
 }
 
+// Success Indicator status
+export type SuccessIndicatorStatus = 'on_track' | 'at_risk' | 'achieved' | 'missed' | 'pending';
+
+// Success Indicator structure (group field)
+export interface SuccessIndicator {
+  indicator_name: string;
+  target_value: string;
+  current_value?: string;
+  status: SuccessIndicatorStatus;
+}
+
 // Activity Timeline entry (for CMS activity tracking)
 export type ActivityType =
   | 'campaign_created'
@@ -133,6 +144,8 @@ export interface Campaign {
   utms?: string[];
   // Activity timeline for CMS activity tracking
   activity_timeline?: CampaignActivity[];
+  // Success Indicators (KPIs and targets)
+  success_indicators?: SuccessIndicator[];
   // System fields
   created_at: string;
   updated_at: string;
@@ -165,6 +178,8 @@ export interface CampaignFormData {
   utms?: string[];
   // Activity timeline
   activity_timeline?: CampaignActivity[];
+  // Success Indicators
+  success_indicators?: SuccessIndicator[];
 }
 
 export interface CampaignMetrics {
@@ -205,3 +220,19 @@ export const CAMPAIGN_STATUS_COLORS: Record<CampaignStatus, string> = {
 export const ALL_CAMPAIGN_STATUSES: CampaignStatus[] = ['planning', 'draft', 'content_creation', 'review', 'active', 'paused', 'completed'];
 
 export const ALL_CAMPAIGN_CHANNELS: CampaignChannel[] = ['Web', 'Native Mobile', 'Social', 'Ads', 'Email'];
+
+export const SUCCESS_INDICATOR_STATUS_LABELS: Record<SuccessIndicatorStatus, string> = {
+  on_track: 'On Track',
+  at_risk: 'At Risk',
+  achieved: 'Achieved',
+  missed: 'Missed',
+  pending: 'Pending',
+};
+
+export const SUCCESS_INDICATOR_STATUS_COLORS: Record<SuccessIndicatorStatus, string> = {
+  on_track: '#10b981',
+  at_risk: '#f59e0b',
+  achieved: '#6366f1',
+  missed: '#ef4444',
+  pending: '#64748b',
+};

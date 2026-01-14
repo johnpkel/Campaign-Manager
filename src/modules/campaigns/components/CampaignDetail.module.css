@@ -557,3 +557,90 @@
   font-size: 12px;
   color: #64748b;
 }
+
+/* Success Indicators */
+.successIndicators {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.indicatorCard {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.indicatorHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.indicatorName {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+  line-height: 1.4;
+}
+
+.indicatorStatus {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.indicatorValues {
+  display: flex;
+  gap: 24px;
+}
+
+.indicatorValue {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.indicatorValueLabel {
+  font-size: 11px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.indicatorValueText {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.indicatorProgress {
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.indicatorProgressBar {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+@media (max-width: 600px) {
+  .successIndicators {
+    grid-template-columns: 1fr;
+  }
+}

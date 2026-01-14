@@ -5,6 +5,8 @@ import {
   CAMPAIGN_STATUS_LABELS,
   CAMPAIGN_STATUS_COLORS,
   CAMPAIGN_CHANNEL_LABELS,
+  SUCCESS_INDICATOR_STATUS_LABELS,
+  SUCCESS_INDICATOR_STATUS_COLORS,
 } from '../types/campaign';
 import { CampaignPerformanceHighlights } from './CampaignPerformanceHighlights';
 import { CampaignActivityTimeline } from './CampaignActivityTimeline';
@@ -36,6 +38,14 @@ function formatDate(dateString: string): string {
 
 function formatDateRange(startDate: string, endDate: string): string {
   return `${formatDate(startDate)} - ${formatDate(endDate)}`;
+}
+
+// Helper to calculate progress percentage from current/target values
+function calculateProgress(currentValue: string, targetValue: string): number {
+  const current = parseFloat(currentValue.replace(/[^0-9.]/g, ''));
+  const target = parseFloat(targetValue.replace(/[^0-9.]/g, ''));
+  if (isNaN(current) || isNaN(target) || target === 0) return 0;
+  return (current / target) * 100;
 }
 
 // Helper to render RTE content as bullet points
@@ -141,6 +151,61 @@ export function CampaignDetail({ campaign, onEdit, onBack }: CampaignDetailProps
           )}
           {keyMessages.length === 0 && campaignGoals.length === 0 && (
             <p className={styles.emptyText}>No key messages or goals defined yet.</p>
+          )}
+        </div>
+      </section>
+
+      {/* Success Indicators */}
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>
+          <span className={styles.sectionIcon}>🎯</span>
+          Success Indicators
+        </h2>
+        <div className={styles.card}>
+          {campaign.success_indicators && campaign.success_indicators.length > 0 ? (
+            <div className={styles.successIndicators}>
+              {campaign.success_indicators.map((indicator, index) => (
+                <div key={index} className={styles.indicatorCard}>
+                  <div className={styles.indicatorHeader}>
+                    <span className={styles.indicatorName}>{indicator.indicator_name}</span>
+                    <span
+                      className={styles.indicatorStatus}
+                      style={{
+                        backgroundColor: `${SUCCESS_INDICATOR_STATUS_COLORS[indicator.status]}15`,
+                        color: SUCCESS_INDICATOR_STATUS_COLORS[indicator.status],
+                      }}
+                    >
+                      {SUCCESS_INDICATOR_STATUS_LABELS[indicator.status]}
+                    </span>
+                  </div>
+                  <div className={styles.indicatorValues}>
+                    <div className={styles.indicatorValue}>
+                      <span className={styles.indicatorValueLabel}>Target</span>
+                      <span className={styles.indicatorValueText}>{indicator.target_value}</span>
+                    </div>
+                    {indicator.current_value && (
+                      <div className={styles.indicatorValue}>
+                        <span className={styles.indicatorValueLabel}>Current</span>
+                        <span className={styles.indicatorValueText}>{indicator.current_value}</span>
+                      </div>
+                    )}
+                  </div>
+                  {indicator.current_value && indicator.target_value && (
+                    <div className={styles.indicatorProgress}>
+                      <div
+                        className={styles.indicatorProgressBar}
+                        style={{
+                          width: `${Math.min(100, calculateProgress(indicator.current_value, indicator.target_value))}%`,
+                          backgroundColor: SUCCESS_INDICATOR_STATUS_COLORS[indicator.status],
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className={styles.emptyText}>No success indicators defined. Add KPIs to track campaign performance.</p>
           )}
         </div>
       </section>

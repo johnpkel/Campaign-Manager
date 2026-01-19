@@ -1,4 +1,4 @@
-import { Campaign, RTEContent, MilestoneStatus, CampaignActivity } from '../types';
+import { Campaign, RTEContent, MilestoneStatus } from '../types';
 
 // Helper to create simple RTE content
 function createRTEContent(text: string): RTEContent {

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Campaign } from '../types/campaign';
 import styles from './MockWebsite.module.css';
 

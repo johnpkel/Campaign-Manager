@@ -7,6 +7,8 @@ import {
   LyticsAudience,
   RecommendedPage,
   CampaignTargetingRecommendations,
+  QuestionSuggestion,
+  ExperimentType,
 } from '../types/ai';
 import {
   createAudienceInsightService,
@@ -364,9 +366,36 @@ const STEP_QUESTIONS: Record<CampaignCreationStep, (draft: Partial<CampaignDraft
     return msg;
   },
 
+  experimentation: (draft) => {
+    const targeting = draft.targetingRecommendations;
+    const hasVariants = targeting?.createVariants && targeting.selectedPages && targeting.selectedAudiences;
+    const audienceCount = targeting?.selectedAudiences?.length || 0;
+
+    let msg = `**Would you like to set up experimentation for this campaign?**\n\n`;
+    msg += `Experimentation allows you to test different content variations and optimize performance over time.\n\n`;
+
+    msg += `**Experiment Types:**\n`;
+    msg += `- **Multi-armed Bandit** - Automatically shifts traffic to best-performing variants in real-time\n`;
+    msg += `- **A/B Test** - Split traffic evenly between variants for statistical comparison\n`;
+    msg += `- **No Experimentation** - Use fixed content without testing\n\n`;
+
+    if (hasVariants && audienceCount > 1) {
+      msg += `Since you have ${audienceCount} audience segments, I recommend using a **Multi-armed Bandit** approach to automatically optimize which content performs best for each segment.\n\n`;
+    }
+
+    msg += `**What type of experiment would you like to run?**\n\n`;
+    msg += `You can also specify:\n`;
+    msg += `- Which audiences to include in testing\n`;
+    msg += `- How long to run the experiment (defaults to campaign duration)\n`;
+    msg += `- Whether AI should auto-create additional variants`;
+
+    return msg;
+  },
+
   complete: (draft) => {
     const targeting = draft.targetingRecommendations;
     const createdVariants = targeting?.createVariants && targeting.selectedPages && targeting.selectedAudiences;
+    const experimentConfig = draft.experimentConfig;
 
     let msg = `**Campaign "${draft.title}" has been created!**\n\n`;
 
@@ -384,11 +413,28 @@ const STEP_QUESTIONS: Record<CampaignCreationStep, (draft: Partial<CampaignDraft
       msg += `\n`;
     }
 
+    if (experimentConfig && experimentConfig.type !== 'none') {
+      msg += `**Experimentation Setup:**\n`;
+      const typeLabel = experimentConfig.type === 'multi_armed_bandit' ? 'Multi-armed Bandit' : 'A/B Test';
+      msg += `- Type: ${typeLabel}\n`;
+      msg += `- Duration: ${experimentConfig.duration}\n`;
+      if (experimentConfig.testAudiences.length > 0) {
+        msg += `- Test Audiences: ${experimentConfig.testAudiences.join(', ')}\n`;
+      }
+      if (experimentConfig.autoCreateVariants) {
+        msg += `- AI will automatically generate additional content variants\n`;
+      }
+      msg += `\n`;
+    }
+
     msg += `Your new campaign is now set up and ready to go. You can:\n`;
     msg += `- View it in the Campaign Manager\n`;
     msg += `- Start adding content and assets\n`;
     if (createdVariants) {
       msg += `- Review and customize the generated variants\n`;
+    }
+    if (experimentConfig && experimentConfig.type !== 'none') {
+      msg += `- Monitor experiment performance in Analytics\n`;
     }
     msg += `- Invite team members to collaborate\n\n`;
     msg += `Is there anything else you'd like help with?`;
@@ -412,8 +458,146 @@ const STEP_ORDER: CampaignCreationStep[] = [
   'review',
   'audience_page_recommendations',
   'variant_confirmation',
+  'experimentation',
   'complete',
 ];
+
+// Clickable suggestion chips for each step
+const STEP_SUGGESTIONS: Record<CampaignCreationStep, (draft: Partial<CampaignDraft>, rec?: CampaignRecommendation) => QuestionSuggestion[]> = {
+  recommendations: () => [],
+
+  title: (_draft, rec) => {
+    const suggestions: QuestionSuggestion[] = [];
+    if (rec) {
+      const monthYear = new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+      // Truncate long recommendation titles for chip labels
+      const shortTitle = rec.title.length > 20 ? rec.title.substring(0, 20) + '...' : rec.title;
+      suggestions.push({ label: `${shortTitle} - ${monthYear}`, value: `${rec.title} - ${monthYear}` });
+      suggestions.push({ label: `${shortTitle} Initiative`, value: `${rec.title} Initiative` });
+    }
+    suggestions.push({ label: 'Q1 Campaign', value: 'Q1 Campaign' });
+    suggestions.push({ label: 'Product Launch', value: 'Product Launch Campaign' });
+    return suggestions;
+  },
+
+  key_messages: () => [
+    { label: 'Increase brand awareness', value: 'Increase brand awareness and establish market presence through consistent messaging and multi-channel engagement' },
+    { label: 'Drive conversions', value: 'Drive conversions with compelling offers and clear call-to-actions focused on customer value' },
+    { label: 'Build customer loyalty', value: 'Build customer loyalty through personalized experiences and exclusive benefits' },
+  ],
+
+  goals: () => [
+    { label: '10K impressions', value: 'Achieve 10,000 impressions and 500 conversions with 5% engagement rate' },
+    { label: '20% revenue increase', value: 'Increase revenue by 20% compared to previous quarter through targeted campaigns' },
+    { label: '5K new leads', value: 'Generate 5,000 new qualified leads with 3% conversion to customers' },
+  ],
+
+  audiences: (_draft, rec) => {
+    const suggestions: QuestionSuggestion[] = [];
+    if (rec?.suggestedAudiences) {
+      rec.suggestedAudiences.forEach(audience => {
+        suggestions.push({ label: audience, value: audience });
+      });
+    }
+    suggestions.push({ label: 'High-value customers', value: 'High-value customers, returning visitors' });
+    suggestions.push({ label: 'New prospects', value: 'New prospects, first-time visitors' });
+    suggestions.push({ label: 'Engaged subscribers', value: 'Engaged email subscribers, loyal customers' });
+    return suggestions.slice(0, 4);
+  },
+
+  dates: () => {
+    const today = new Date();
+    const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+    const in2Weeks = new Date(today.getTime() + 14 * 24 * 60 * 60 * 1000);
+    const in4Weeks = new Date(today.getTime() + 28 * 24 * 60 * 60 * 1000);
+    const in6Weeks = new Date(today.getTime() + 42 * 24 * 60 * 60 * 1000);
+
+    return [
+      { label: 'Next week, 4 weeks', value: `Start ${nextWeek.toLocaleDateString()}, run for 4 weeks` },
+      { label: '2 weeks, 6 weeks', value: `Start ${in2Weeks.toLocaleDateString()}, run for 6 weeks` },
+      { label: 'Start immediately', value: `Start ${today.toLocaleDateString()}, end ${in4Weeks.toLocaleDateString()}` },
+      { label: 'Custom dates', value: `${nextWeek.toLocaleDateString()} to ${in6Weeks.toLocaleDateString()}` },
+    ];
+  },
+
+  contributors: () => [
+    { label: 'Sarah Chen', value: 'Sarah Chen' },
+    { label: 'Mike Johnson', value: 'Mike Johnson' },
+    { label: 'Emma Wilson', value: 'Emma Wilson' },
+    { label: 'Skip for now', value: 'skip' },
+  ],
+
+  budget: (_draft, rec) => {
+    const suggestions: QuestionSuggestion[] = [];
+    if (rec?.estimatedBudget) {
+      suggestions.push({ label: rec.estimatedBudget, value: rec.estimatedBudget });
+    }
+    suggestions.push({ label: '$10,000', value: '$10,000' });
+    suggestions.push({ label: '$25,000', value: '$25,000' });
+    suggestions.push({ label: '$50,000', value: '$50,000' });
+    suggestions.push({ label: 'TBD', value: 'TBD - to be determined' });
+    return suggestions.slice(0, 4);
+  },
+
+  channels: (_draft, rec) => {
+    const suggestions: QuestionSuggestion[] = [];
+    if (rec?.suggestedChannels && rec.suggestedChannels.length > 0) {
+      suggestions.push({ label: rec.suggestedChannels.join(', '), value: rec.suggestedChannels.join(', ') });
+    }
+    suggestions.push({ label: 'Web, Email', value: 'Web, Email' });
+    suggestions.push({ label: 'Web, Email, Social', value: 'Web, Email, Social' });
+    suggestions.push({ label: 'All channels', value: 'Web, Email, Social, Native Mobile, Ads' });
+    suggestions.push({ label: 'Social only', value: 'Social' });
+    return suggestions.slice(0, 4);
+  },
+
+  market_research: () => [
+    { label: 'Skip for now', value: 'skip' },
+    { label: 'Add later', value: 'Will add market research link later' },
+  ],
+
+  brand_kit: () => [
+    { label: 'Primary Brand', value: 'Primary Brand' },
+    { label: 'Product Line A', value: 'Product Line A' },
+    { label: 'Holiday Theme', value: 'Holiday Theme' },
+    { label: 'Skip', value: 'skip' },
+  ],
+
+  review: () => [
+    { label: 'Looks good', value: 'Looks good' },
+    { label: 'Change title', value: 'I want to change the title' },
+    { label: 'Change budget', value: 'I want to change the budget' },
+    { label: 'Change dates', value: 'I want to change the dates' },
+  ],
+
+  audience_page_recommendations: () => [
+    { label: 'Use all', value: 'All' },
+    { label: 'Audiences 1, 2', value: 'Audiences 1, 2 and Pages 1, 2' },
+    { label: 'Skip targeting', value: 'Skip' },
+  ],
+
+  variant_confirmation: () => [
+    { label: 'Yes, create variants', value: 'Yes, create variants' },
+    { label: 'No, skip variants', value: 'No, just create the campaign' },
+  ],
+
+  experimentation: () => [
+    { label: 'Multi-armed Bandit', value: 'Multi-armed Bandit - let AI optimize' },
+    { label: 'A/B Test', value: 'A/B Test - split traffic evenly' },
+    { label: 'No experiment', value: 'No experimentation needed' },
+    { label: 'Bandit + auto variants', value: 'Multi-armed Bandit with auto-create variants' },
+  ],
+
+  complete: () => [],
+};
+
+export function getStepSuggestions(
+  step: CampaignCreationStep,
+  draft: Partial<CampaignDraft>,
+  recommendation?: CampaignRecommendation
+): QuestionSuggestion[] {
+  return STEP_SUGGESTIONS[step](draft, recommendation);
+}
 
 // Helper function to get recommended audiences based on campaign draft
 function getRecommendedAudiences(draft: Partial<CampaignDraft>): LyticsAudience[] {
@@ -666,6 +850,47 @@ export function parseUserResponse(
       }
       break;
     }
+
+    case 'experimentation': {
+      // Parse experimentation configuration
+      let experimentType: ExperimentType = 'none';
+      let autoCreateVariants = false;
+
+      // Detect experiment type
+      if (lowerMessage.includes('multi-armed') || lowerMessage.includes('bandit') || lowerMessage.includes('mab')) {
+        experimentType = 'multi_armed_bandit';
+      } else if (lowerMessage.includes('a/b') || lowerMessage.includes('ab test') || lowerMessage.includes('split')) {
+        experimentType = 'ab_test';
+      } else if (lowerMessage.includes('no experiment') || lowerMessage.includes('none') || lowerMessage.includes('skip')) {
+        experimentType = 'none';
+      }
+
+      // Check for auto-create variants
+      if (lowerMessage.includes('auto') && (lowerMessage.includes('variant') || lowerMessage.includes('create'))) {
+        autoCreateVariants = true;
+      }
+      if (lowerMessage.includes('yes') && lowerMessage.includes('ai')) {
+        autoCreateVariants = true;
+      }
+
+      // Parse duration if specified (otherwise defaults to campaign duration)
+      let duration = `${draft.startDate || 'TBD'} - ${draft.endDate || 'TBD'}`;
+      const durationMatch = lowerMessage.match(/(\d+)\s*(day|week|month)/i);
+      if (durationMatch) {
+        duration = `${durationMatch[1]} ${durationMatch[2]}s`;
+      }
+
+      // Parse test audiences (defaults to all selected audiences)
+      const testAudiences = draft.targetingRecommendations?.selectedAudiences?.map(a => a.name) || [];
+
+      draft.experimentConfig = {
+        type: experimentType,
+        testAudiences,
+        duration,
+        autoCreateVariants,
+      };
+      break;
+    }
   }
 
   return { draft, isValid: true };
@@ -709,9 +934,11 @@ export function createCampaignCreationMessage(
   content: string,
   step: CampaignCreationStep,
   recommendations?: CampaignRecommendation[],
-  draft?: Partial<CampaignDraft>
+  draft?: Partial<CampaignDraft>,
+  selectedRecommendation?: CampaignRecommendation
 ): AIMessage {
   const isTargetingStep = step === 'audience_page_recommendations' || step === 'variant_confirmation';
+  const suggestions = getStepSuggestions(step, draft || {}, selectedRecommendation);
 
   return {
     id: `ai-msg-${Date.now()}`,
@@ -724,6 +951,7 @@ export function createCampaignCreationMessage(
       questionType: step,
       campaignDraft: draft,
       targetingRecommendations: draft?.targetingRecommendations,
+      suggestions: suggestions.length > 0 ? suggestions : undefined,
     },
   };
 }

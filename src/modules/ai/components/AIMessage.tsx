@@ -1,10 +1,12 @@
 import { AIMessage as AIMessageType, CampaignRecommendation } from '../types/ai';
 import { RecommendationList } from './RecommendationCard';
+import { QuestionChips } from './QuestionChips';
 import styles from './AIMessage.module.css';
 
 interface AIMessageProps {
   message: AIMessageType;
   onSelectRecommendation?: (recommendation: CampaignRecommendation) => void;
+  onSelectSuggestion?: (value: string) => void;
 }
 
 function formatTime(timestamp: string): string {
@@ -26,12 +28,15 @@ function formatContent(content: string): React.ReactNode {
   });
 }
 
-export function AIMessageComponent({ message, onSelectRecommendation }: AIMessageProps) {
+export function AIMessageComponent({ message, onSelectRecommendation, onSelectSuggestion }: AIMessageProps) {
   const isUser = message.role === 'user';
   const hasRecommendations =
     message.metadata?.type === 'recommendation' &&
     message.metadata.recommendations &&
     message.metadata.recommendations.length > 0;
+  const hasSuggestions =
+    message.metadata?.suggestions &&
+    message.metadata.suggestions.length > 0;
 
   return (
     <div className={`${styles.message} ${isUser ? styles.user : styles.assistant}`}>
@@ -47,6 +52,12 @@ export function AIMessageComponent({ message, onSelectRecommendation }: AIMessag
             <RecommendationList
               recommendations={message.metadata!.recommendations!}
               onSelect={onSelectRecommendation}
+            />
+          )}
+          {hasSuggestions && onSelectSuggestion && (
+            <QuestionChips
+              suggestions={message.metadata!.suggestions!}
+              onSelect={onSelectSuggestion}
             />
           )}
         </div>

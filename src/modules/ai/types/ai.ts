@@ -12,6 +12,7 @@ export interface AIMessageMetadata {
   questionType?: CampaignCreationStep;
   campaignDraft?: Partial<CampaignDraft>;
   targetingRecommendations?: CampaignTargetingRecommendations;
+  suggestions?: QuestionSuggestion[];
 }
 
 export type CampaignCreationStep =
@@ -29,7 +30,24 @@ export type CampaignCreationStep =
   | 'review'
   | 'audience_page_recommendations'
   | 'variant_confirmation'
+  | 'experimentation'
   | 'complete';
+
+// Experimentation types
+export type ExperimentType = 'multi_armed_bandit' | 'ab_test' | 'none';
+
+export interface ExperimentConfig {
+  type: ExperimentType;
+  testAudiences: string[];
+  duration: string;
+  autoCreateVariants: boolean;
+}
+
+// Suggested options for campaign creation questions
+export interface QuestionSuggestion {
+  label: string;
+  value: string;
+}
 
 // Lytics audience with member count
 export interface LyticsAudience {
@@ -93,6 +111,8 @@ export interface CampaignDraft {
   brandKit: string;
   // Targeting recommendations (added after review)
   targetingRecommendations?: CampaignTargetingRecommendations;
+  // Experimentation configuration
+  experimentConfig?: ExperimentConfig;
 }
 
 export interface AudienceInsight {

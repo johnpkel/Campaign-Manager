@@ -11,7 +11,10 @@ import {
 import { CampaignPerformanceHighlights } from './CampaignPerformanceHighlights';
 import { CampaignActivityTimeline } from './CampaignActivityTimeline';
 import { CampaignRecommendedUpdates } from './CampaignRecommendedUpdates';
+import { CampaignWebsitePreview } from './CampaignWebsitePreview';
 import styles from './CampaignDetail.module.css';
+
+type DetailTab = 'overview' | 'preview';
 
 interface CampaignDetailProps {
   campaign: Campaign;
@@ -72,6 +75,7 @@ function renderRTEAsBullets(content: Campaign['key_messages']): string[] {
 
 export function CampaignDetail({ campaign, onEdit, onBack }: CampaignDetailProps) {
   const [activeAssetIndex, setActiveAssetIndex] = useState(0);
+  const [activeTab, setActiveTab] = useState<DetailTab>('overview');
 
   const voiceProfile = campaign.voice_profile?.[0];
   const keyMessages = renderRTEAsBullets(campaign.key_messages);
@@ -117,8 +121,31 @@ export function CampaignDetail({ campaign, onEdit, onBack }: CampaignDetailProps
         </div>
       </div>
 
-      {/* Recommended Updates */}
-      <CampaignRecommendedUpdates campaign={campaign} />
+      {/* Tab Navigation */}
+      <div className={styles.tabBar}>
+        <button
+          className={`${styles.tab} ${activeTab === 'overview' ? styles.tabActive : ''}`}
+          onClick={() => setActiveTab('overview')}
+        >
+          <span className={styles.tabIcon}>📋</span>
+          Overview
+        </button>
+        <button
+          className={`${styles.tab} ${activeTab === 'preview' ? styles.tabActive : ''}`}
+          onClick={() => setActiveTab('preview')}
+        >
+          <span className={styles.tabIcon}>🌐</span>
+          Website Preview
+        </button>
+      </div>
+
+      {/* Tab Content */}
+      {activeTab === 'preview' ? (
+        <CampaignWebsitePreview campaign={campaign} />
+      ) : (
+        <>
+          {/* Recommended Updates */}
+          <CampaignRecommendedUpdates campaign={campaign} />
 
       {/* Performance Highlights */}
       {(campaign.status === 'active' || campaign.status === 'completed') && (
@@ -452,6 +479,8 @@ export function CampaignDetail({ campaign, onEdit, onBack }: CampaignDetailProps
             </table>
           </div>
         </section>
+      )}
+        </>
       )}
     </div>
   );

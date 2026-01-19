@@ -95,7 +95,7 @@ export function AIProvider({ children, config }: AIProviderProps) {
     }));
 
     const question = getStepQuestion('title', {}, recommendation);
-    const assistantMessage = createCampaignCreationMessage(question, 'title', undefined, {});
+    const assistantMessage = createCampaignCreationMessage(question, 'title', undefined, {}, recommendation);
 
     setMessages(prev => [...prev, assistantMessage]);
   }, []);
@@ -153,7 +153,7 @@ export function AIProvider({ children, config }: AIProviderProps) {
           }));
 
           const completeMessage = getStepQuestion('complete', draft);
-          const assistantMessage = createCampaignCreationMessage(completeMessage, 'complete', undefined, draft);
+          const assistantMessage = createCampaignCreationMessage(completeMessage, 'complete', undefined, draft, selectedRecommendation);
           setMessages(prev => [...prev, assistantMessage]);
 
           // Reset after completion
@@ -196,7 +196,8 @@ export function AIProvider({ children, config }: AIProviderProps) {
         question,
         nextStep,
         undefined,
-        updatedDraft
+        updatedDraft,
+        selectedRecommendation
       );
       setMessages(prev => [...prev, assistantMessage]);
     },

@@ -17,6 +17,9 @@ const STEP_LABELS: Record<string, string> = {
   market_research: 'Market research',
   brand_kit: 'Brand kit',
   review: 'Review & confirm',
+  audience_page_recommendations: 'Targeting',
+  variant_confirmation: 'Variants',
+  experimentation: 'Experimentation setup',
   complete: 'Complete',
 };
 
@@ -90,9 +93,9 @@ export function AIChatPanel() {
       {campaignCreation.isActive && (
         <div className={styles.progressBar}>
           <div className={styles.progressSteps}>
-            {['title', 'key_messages', 'goals', 'audiences', 'dates', 'contributors', 'budget', 'channels', 'brand_kit', 'review'].map(
+            {['title', 'key_messages', 'goals', 'audiences', 'dates', 'contributors', 'budget', 'channels', 'brand_kit', 'review', 'targeting', 'experimentation'].map(
               (step) => {
-                const stepIndex = [
+                const allSteps = [
                   'recommendations',
                   'title',
                   'key_messages',
@@ -105,23 +108,21 @@ export function AIChatPanel() {
                   'market_research',
                   'brand_kit',
                   'review',
-                ].indexOf(campaignCreation.currentStep);
-                const thisStepIndex = [
-                  'recommendations',
-                  'title',
-                  'key_messages',
-                  'goals',
-                  'audiences',
-                  'dates',
-                  'contributors',
-                  'budget',
-                  'channels',
-                  'market_research',
-                  'brand_kit',
-                  'review',
-                ].indexOf(step);
+                  'audience_page_recommendations',
+                  'variant_confirmation',
+                  'experimentation',
+                  'complete',
+                ];
+                const stepIndex = allSteps.indexOf(campaignCreation.currentStep);
+                // Map display step to actual step for index calculation
+                const stepMapping: Record<string, string> = {
+                  targeting: 'audience_page_recommendations',
+                };
+                const actualStep = stepMapping[step] || step;
+                const thisStepIndex = allSteps.indexOf(actualStep);
                 const isComplete = thisStepIndex < stepIndex;
-                const isCurrent = step === campaignCreation.currentStep;
+                const isCurrent = actualStep === campaignCreation.currentStep ||
+                  (step === 'targeting' && campaignCreation.currentStep === 'variant_confirmation');
 
                 return (
                   <div
@@ -176,6 +177,7 @@ export function AIChatPanel() {
                 key={message.id}
                 message={message}
                 onSelectRecommendation={selectRecommendation}
+                onSelectSuggestion={handleSuggestionClick}
               />
             ))}
             {status === 'thinking' && (

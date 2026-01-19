@@ -1,0 +1,422 @@
+.container {
+  display: flex;
+  height: calc(100vh - 200px);
+  min-height: 600px;
+  background: #f8fafc;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+
+/* Sidebar - Page Directory */
+.sidebar {
+  width: 320px;
+  background: white;
+  border-right: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  transition: width 0.3s ease;
+}
+
+.sidebarCollapsed {
+  width: 48px;
+}
+
+.sidebarHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.collapseButton {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #64748b;
+  flex-shrink: 0;
+}
+
+.collapseButton:hover {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.sidebarTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+  flex: 1;
+}
+
+.pageCount {
+  font-size: 12px;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.pageDirectory {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.directorySummary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #eff6ff 0%, #faf5ff 100%);
+  font-size: 13px;
+  color: #475569;
+  font-weight: 500;
+}
+
+.summaryIcon {
+  font-size: 16px;
+}
+
+.pageList {
+  padding: 8px;
+}
+
+.pageItem {
+  margin-bottom: 4px;
+}
+
+.pageHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 12px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s ease;
+}
+
+.pageHeader:hover {
+  background: #f1f5f9;
+}
+
+.pageHeaderActive {
+  background: #eff6ff;
+}
+
+.pageExpandIcon {
+  font-size: 10px;
+  color: #94a3b8;
+  width: 12px;
+  flex-shrink: 0;
+}
+
+.pageIcon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.pageInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.pageTitle {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pagePath {
+  display: block;
+  font-size: 11px;
+  color: #94a3b8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.personalizedBadge {
+  font-size: 12px;
+}
+
+.elementCount {
+  font-size: 11px;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.elementList {
+  margin-left: 32px;
+  padding: 4px 0 8px;
+  border-left: 2px solid #e2e8f0;
+}
+
+.elementItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s ease;
+}
+
+.elementItem:hover {
+  background: #f8fafc;
+}
+
+.elementItemSelected {
+  background: #eff6ff;
+  border-left: 2px solid #6366f1;
+  margin-left: -2px;
+}
+
+.elementIcon {
+  font-size: 14px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.elementInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.elementDescription {
+  display: block;
+  font-size: 12px;
+  color: #475569;
+  line-height: 1.4;
+}
+
+.variantName {
+  display: block;
+  font-size: 11px;
+  color: #8b5cf6;
+  margin-top: 2px;
+}
+
+.viewPageButton {
+  display: block;
+  width: calc(100% - 24px);
+  margin: 8px 12px;
+  padding: 6px 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #6366f1;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.viewPageButton:hover {
+  background: #6366f1;
+  border-color: #6366f1;
+  color: white;
+}
+
+/* Browser Area */
+.browserArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.browserToolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: white;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.browserControls {
+  display: flex;
+  gap: 4px;
+}
+
+.browserButton {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #64748b;
+  transition: all 0.2s ease;
+}
+
+.browserButton:hover {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.urlBar {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0 12px;
+  height: 36px;
+}
+
+.urlIcon {
+  font-size: 12px;
+  color: #10b981;
+}
+
+.urlText {
+  font-size: 13px;
+  color: #1e293b;
+  font-family: monospace;
+}
+
+.urlPage {
+  margin-left: auto;
+  font-size: 12px;
+  color: #64748b;
+  background: #e2e8f0;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.highlightToggle {
+  flex-shrink: 0;
+}
+
+.toggleLabel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.toggleInput {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.toggleSwitch {
+  position: relative;
+  width: 40px;
+  height: 22px;
+  background: #e2e8f0;
+  border-radius: 11px;
+  transition: background 0.2s ease;
+}
+
+.toggleSwitch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.toggleInput:checked + .toggleSwitch {
+  background: #6366f1;
+}
+
+.toggleInput:checked + .toggleSwitch::after {
+  transform: translateX(18px);
+}
+
+.toggleText {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #475569;
+}
+
+.toggleIcon {
+  font-size: 14px;
+}
+
+/* Highlight Legend */
+.highlightLegend {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 16px;
+  background: #fffbeb;
+  border-bottom: 1px solid #fcd34d;
+}
+
+.legendTitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: #92400e;
+}
+
+.legendItems {
+  display: flex;
+  gap: 16px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #78716c;
+}
+
+.legendColor {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+/* Browser Frame */
+.browserFrame {
+  flex: 1;
+  position: relative;
+  background: white;
+  overflow: auto;
+  border-radius: 0 0 8px 0;
+}

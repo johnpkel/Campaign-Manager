@@ -7,27 +7,30 @@
 /* Tab Bar */
 .tabBar {
   display: flex;
+  flex-wrap: wrap;
   gap: 4px;
   margin-bottom: 24px;
   padding: 4px;
   background: #f1f5f9;
   border-radius: 12px;
   width: fit-content;
+  max-width: 100%;
 }
 
 .tab {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
+  gap: 6px;
+  padding: 10px 16px;
   background: transparent;
   border: none;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: #64748b;
   cursor: pointer;
   transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .tab:hover {
@@ -42,7 +45,22 @@
 }
 
 .tabIcon {
-  font-size: 16px;
+  font-size: 14px;
+}
+
+@media (max-width: 900px) {
+  .tabBar {
+    width: 100%;
+  }
+
+  .tab {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .tabIcon {
+    font-size: 12px;
+  }
 }
 
 /* Header */

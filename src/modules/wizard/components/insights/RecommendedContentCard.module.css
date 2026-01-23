@@ -1,0 +1,217 @@
+.card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.2s;
+}
+
+.card:hover {
+  border-color: #c7d2fe;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+}
+
+.cardLoading {
+  opacity: 0.6;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.titleSection {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon {
+  font-size: 18px;
+}
+
+.title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.count {
+  font-size: 12px;
+  color: #6366f1;
+  font-weight: 500;
+}
+
+/* Content List */
+.contentList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.contentItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.contentItem:hover {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.contentSelected {
+  background: #f0f9ff;
+  border-color: #6366f1;
+}
+
+.contentLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.contentImage {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.contentImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.contentIconWrapper {
+  width: 40px;
+  height: 40px;
+  background: #f1f5f9;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.contentTypeIcon {
+  font-size: 18px;
+}
+
+.contentInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.contentTitle {
+  font-size: 13px;
+  font-weight: 500;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.contentMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.contentType {
+  font-size: 11px;
+  color: #6366f1;
+  font-weight: 500;
+}
+
+.contentUrl {
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+.matchReason {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.contentRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.relevanceBar {
+  width: 40px;
+  height: 4px;
+  background: #e2e8f0;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.relevanceFill {
+  height: 100%;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  border-radius: 2px;
+}
+
+.relevanceScore {
+  font-size: 11px;
+  font-weight: 500;
+  color: #6366f1;
+  min-width: 28px;
+}
+
+.checkbox {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #cbd5e1;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: white;
+  transition: all 0.2s;
+}
+
+.checkboxChecked {
+  background: #6366f1;
+  border-color: #6366f1;
+}
+
+/* Empty State */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+  text-align: center;
+}
+
+.emptyIcon {
+  font-size: 32px;
+  margin-bottom: 8px;
+  opacity: 0.5;
+}
+
+.emptyText {
+  font-size: 13px;
+  color: #94a3b8;
+}

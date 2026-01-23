@@ -26,11 +26,12 @@ interface CampaignListProps {
   onEdit: (campaign: Campaign) => void;
   onCreate: () => void;
   onView?: (campaign: Campaign) => void;
+  onWizard?: () => void;
 }
 
 type SortableField = 'title' | 'status' | 'start_date' | 'end_date' | 'updated_at';
 
-export function CampaignList({ onEdit, onCreate, onView }: CampaignListProps) {
+export function CampaignList({ onEdit, onCreate, onView, onWizard }: CampaignListProps) {
   const { campaigns, deleteCampaign, isLoading, error } = useCampaigns();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<CampaignStatus | 'all'>('all');
@@ -178,6 +179,12 @@ export function CampaignList({ onEdit, onCreate, onView }: CampaignListProps) {
             </Button>
           </Dropdown>
         </div>
+        {onWizard && (
+          <Button buttonType="secondary" onClick={onWizard}>
+            <span style={{ marginRight: '6px' }}>🪄</span>
+            Campaign Wizard
+          </Button>
+        )}
         <Button buttonType="primary" icon="Add" onClick={onCreate}>
           New Campaign
         </Button>

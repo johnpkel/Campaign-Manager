@@ -1,0 +1,349 @@
+.card {
+  grid-column: span 2;
+  background: linear-gradient(135deg, #faf5ff 0%, #f5f3ff 100%);
+  border: 1px solid #e0e7ff;
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.2s;
+}
+
+.cardLoading {
+  opacity: 0.6;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.titleSection {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon {
+  font-size: 18px;
+}
+
+.title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.scoreLabel {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Score Section */
+.scoreSection {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+.scoreCircle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--color) calc(var(--score) * 3.6deg),
+    #e2e8f0 calc(var(--score) * 3.6deg)
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.scoreCircleInner {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.scoreValue {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1;
+}
+
+.scoreMax {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+/* Predictions */
+.predictions {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.predictionItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.predictionLabel {
+  font-size: 11px;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.predictionValue {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.confidenceBadge {
+  grid-column: span 3;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* Brand Alignment - Inline in Top Row */
+.brandAlignmentInline {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 16px;
+  background: white;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  min-width: 90px;
+  flex-shrink: 0;
+}
+
+.brandAlignmentLabel {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.brandIcon {
+  font-size: 12px;
+}
+
+.brandScoreCircle {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--brand-color) calc(var(--brand-score) * 3.6deg),
+    #e2e8f0 calc(var(--brand-score) * 3.6deg)
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brandScoreValueSmall {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.brandKitName {
+  font-size: 10px;
+  color: #7c3aed;
+  font-weight: 500;
+  text-align: center;
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Areas Section */
+.areasSection {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.areaGroup {
+  flex: 1;
+}
+
+.areaLabel {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+.areaIcon {
+  font-size: 12px;
+}
+
+.areaTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.strengthTag {
+  padding: 4px 10px;
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Suggestions Section */
+.suggestionsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.suggestionsTitle {
+  font-size: 12px;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.suggestionsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.suggestionItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.impactBadge {
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.impactHigh {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+.impactMedium {
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+}
+
+.impactLow {
+  background: rgba(100, 116, 139, 0.1);
+  color: #64748b;
+}
+
+.suggestionContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.suggestionField {
+  font-size: 13px;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.suggestionReason {
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .scoreSection {
+    flex-wrap: wrap;
+  }
+
+  .brandAlignmentInline {
+    flex-direction: row;
+    min-width: auto;
+    width: 100%;
+    justify-content: center;
+    padding: 10px 16px;
+    gap: 12px;
+  }
+
+  .brandScoreCircle {
+    width: 40px;
+    height: 40px;
+  }
+
+  .brandScoreValueSmall {
+    width: 32px;
+    height: 32px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 700px) {
+  .card {
+    grid-column: span 1;
+  }
+
+  .scoreSection {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .predictions {
+    width: 100%;
+  }
+
+  .areasSection {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .brandAlignmentInline {
+    width: 100%;
+  }
+}

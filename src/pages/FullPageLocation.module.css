@@ -123,3 +123,11 @@
   max-width: 400px;
   line-height: 1.6;
 }
+
+/* Wizard Full Screen */
+.wizardFullScreen {
+  height: 100vh;
+  width: 100%;
+  background: #f8fafc;
+  overflow: hidden;
+}

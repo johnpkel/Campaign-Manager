@@ -1,0 +1,110 @@
+.wizardContainer {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  background: #f8fafc;
+  overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+/* Left Panel - AI Conversation (25%) */
+.conversationPanel {
+  flex: 0 0 25%;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-right: 1px solid #e2e8f0;
+  overflow: hidden;
+}
+
+/* Center Panel - Campaign Brief (50%) */
+.briefPanel {
+  flex: 0 0 50%;
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-right: 1px solid #e2e8f0;
+  overflow: hidden;
+}
+
+/* Right Panel - Suggestions (25%) */
+.suggestionsPanel {
+  flex: 0 0 25%;
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  overflow-y: auto;
+  transition: all 0.3s ease;
+}
+
+.suggestionsPanelCollapsed {
+  width: 0;
+  min-width: 0;
+  flex: 0;
+  overflow: hidden;
+  opacity: 0;
+}
+
+/* Responsive: Adjust at 1400px */
+@media (max-width: 1400px) {
+  .conversationPanel {
+    flex: 0 0 28%;
+    min-width: 280px;
+  }
+
+  .briefPanel {
+    flex: 0 0 44%;
+  }
+
+  .suggestionsPanel {
+    flex: 0 0 28%;
+    min-width: 260px;
+  }
+}
+
+/* Responsive: Two columns at 1100px */
+@media (max-width: 1100px) {
+  .wizardContainer {
+    flex-wrap: wrap;
+  }
+
+  .conversationPanel {
+    flex: 0 0 40%;
+    min-width: 0;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .briefPanel {
+    flex: 0 0 60%;
+    border-right: none;
+  }
+
+  .suggestionsPanel {
+    flex: 0 0 100%;
+    min-width: 0;
+    max-height: 300px;
+    border-top: 1px solid #e2e8f0;
+  }
+}
+
+/* Responsive: Stack at 768px */
+@media (max-width: 768px) {
+  .conversationPanel {
+    flex: 0 0 100%;
+    max-height: 40%;
+    border-right: none;
+  }
+
+  .briefPanel {
+    flex: 0 0 100%;
+    max-height: 40%;
+  }
+
+  .suggestionsPanel {
+    flex: 0 0 100%;
+    max-height: 20%;
+  }
+}

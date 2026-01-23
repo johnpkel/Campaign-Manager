@@ -4,12 +4,18 @@ import { CampaignList, CampaignForm, CampaignDetail, MetricsCard } from '../comp
 import { useCampaigns } from '../contexts';
 import { useExperience, ExperienceDashboard, ModuleView } from '../experience';
 import { ActivityFeed } from '../modules/collaboration';
+import { AIProvider } from '../modules/ai';
+import { WizardProvider, CampaignWizard } from '../modules/wizard';
 import { Campaign, CampaignFormData } from '../types';
 import styles from './FullPageLocation.module.css';
 
 type CampaignView = 'list' | 'detail' | 'create' | 'edit';
 
-function CampaignModule() {
+interface CampaignModuleProps {
+  onWizardOpen: () => void;
+}
+
+function CampaignModule({ onWizardOpen }: CampaignModuleProps) {
   const { metrics, addCampaign, updateCampaign } = useCampaigns();
   const [currentView, setCurrentView] = useState<CampaignView>('list');
   const [editingCampaign, setEditingCampaign] = useState<Campaign | null>(null);
@@ -141,7 +147,7 @@ function CampaignModule() {
 
       <div className={styles.moduleMain}>
         {currentView === 'list' && (
-          <CampaignList onEdit={handleEdit} onCreate={handleCreate} onView={handleView} />
+          <CampaignList onEdit={handleEdit} onCreate={handleCreate} onView={handleView} onWizard={onWizardOpen} />
         )}
         {currentView === 'detail' && viewingCampaign && (
           <CampaignDetail
@@ -187,10 +193,32 @@ function CollaborationModule() {
 
 export function FullPageLocation() {
   const { activeModule, isModuleExpanded } = useExperience();
+  const [isWizardActive, setIsWizardActive] = useState(false);
+
+  const handleWizardOpen = useCallback(() => {
+    setIsWizardActive(true);
+  }, []);
+
+  const handleWizardClose = useCallback(() => {
+    setIsWizardActive(false);
+  }, []);
 
   // Show dashboard when no module is expanded
   if (!isModuleExpanded || !activeModule) {
     return <ExperienceDashboard />;
+  }
+
+  // Render wizard in full-screen mode (outside ModuleView)
+  if (isWizardActive && (activeModule === 'campaigns' || activeModule === 'upcoming')) {
+    return (
+      <div className={styles.wizardFullScreen}>
+        <AIProvider>
+          <WizardProvider onExit={handleWizardClose}>
+            <CampaignWizard onComplete={handleWizardClose} onCancel={handleWizardClose} />
+          </WizardProvider>
+        </AIProvider>
+      </div>
+    );
   }
 
   // Show the expanded module view
@@ -198,7 +226,7 @@ export function FullPageLocation() {
     switch (activeModule) {
       case 'campaigns':
       case 'upcoming':
-        return <CampaignModule />;
+        return <CampaignModule onWizardOpen={handleWizardOpen} />;
       case 'analytics':
         return <AnalyticsModule />;
       case 'collaboration':

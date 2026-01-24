@@ -1,4 +1,5 @@
 import { useWizard } from '../contexts';
+import { RecommendedAsset, RecommendedContent, ExperimentSuggestion } from '../types';
 import styles from './CampaignBriefPanel.module.css';
 
 interface BriefFieldProps {
@@ -23,6 +24,126 @@ function BriefField({ label, value, icon, isActive, isEmpty }: BriefFieldProps) 
       </div>
       <div className={styles.fieldValue}>
         {displayValue || <span className={styles.placeholder}>Not set yet</span>}
+      </div>
+    </div>
+  );
+}
+
+// Component for displaying selected assets with thumbnails
+interface AssetsFieldProps {
+  assets: RecommendedAsset[];
+}
+
+function AssetsField({ assets }: AssetsFieldProps) {
+  if (assets.length === 0) {
+    return (
+      <div className={`${styles.field} ${styles.fieldEmpty}`}>
+        <div className={styles.fieldHeader}>
+          <span className={styles.fieldIcon}>🏷️</span>
+          <span className={styles.fieldLabel}>Selected Assets</span>
+        </div>
+        <div className={styles.fieldValue}>
+          <span className={styles.placeholder}>Select assets from suggestions →</span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.field}>
+      <div className={styles.fieldHeader}>
+        <span className={styles.fieldIcon}>🏷️</span>
+        <span className={styles.fieldLabel}>Selected Assets</span>
+        <span className={styles.fieldCheck}>✓</span>
+      </div>
+      <div className={styles.assetsList}>
+        {assets.map(asset => (
+          <div key={asset.id} className={styles.assetItem}>
+            <img src={asset.thumbnailUrl} alt={asset.title} className={styles.assetThumb} />
+            <span className={styles.assetName}>{asset.title}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Component for displaying selected content entries
+interface ContentFieldProps {
+  content: RecommendedContent[];
+}
+
+function ContentField({ content }: ContentFieldProps) {
+  if (content.length === 0) {
+    return (
+      <div className={`${styles.field} ${styles.fieldEmpty}`}>
+        <div className={styles.fieldHeader}>
+          <span className={styles.fieldIcon}>📰</span>
+          <span className={styles.fieldLabel}>Selected Content</span>
+        </div>
+        <div className={styles.fieldValue}>
+          <span className={styles.placeholder}>Select content from suggestions →</span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.field}>
+      <div className={styles.fieldHeader}>
+        <span className={styles.fieldIcon}>📰</span>
+        <span className={styles.fieldLabel}>Selected Content</span>
+        <span className={styles.fieldCheck}>✓</span>
+      </div>
+      <div className={styles.contentList}>
+        {content.map(item => (
+          <div key={item.entryUid} className={styles.contentItem}>
+            {item.imageUrl && <img src={item.imageUrl} alt={item.title} className={styles.contentThumb} />}
+            <div className={styles.contentInfo}>
+              <span className={styles.contentTitle}>{item.title}</span>
+              <span className={styles.contentType}>{item.contentType}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Component for displaying selected experiment
+interface ExperimentFieldProps {
+  experiment: ExperimentSuggestion | null | undefined;
+}
+
+function ExperimentField({ experiment }: ExperimentFieldProps) {
+  if (!experiment) {
+    return (
+      <div className={`${styles.field} ${styles.fieldEmpty}`}>
+        <div className={styles.fieldHeader}>
+          <span className={styles.fieldIcon}>🧪</span>
+          <span className={styles.fieldLabel}>Experimentation</span>
+        </div>
+        <div className={styles.fieldValue}>
+          <span className={styles.placeholder}>Select experiment from suggestions →</span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.field}>
+      <div className={styles.fieldHeader}>
+        <span className={styles.fieldIcon}>🧪</span>
+        <span className={styles.fieldLabel}>Experimentation</span>
+        <span className={styles.fieldCheck}>✓</span>
+      </div>
+      <div className={styles.experimentDetails}>
+        <span className={styles.experimentTitle}>{experiment.title}</span>
+        <span className={styles.experimentType}>
+          {experiment.type === 'ab_test' ? 'A/B Test' :
+           experiment.type === 'multi_armed_bandit' ? 'Multi-Armed Bandit' : 'Personalization'}
+        </span>
+        <span className={styles.experimentLift}>Est. lift: {experiment.estimatedLift}</span>
       </div>
     </div>
   );
@@ -223,6 +344,17 @@ export function CampaignBriefPanel() {
           isActive={activeField === 'marketResearch'}
           isEmpty={!campaignDraft.marketResearch}
         />
+
+        {/* Selected items from suggestion cards */}
+        <div className={styles.selectedSection}>
+          <div className={styles.sectionDivider}>
+            <span className={styles.sectionLabel}>From Suggestions</span>
+          </div>
+
+          <AssetsField assets={campaignDraft.selectedAssets || []} />
+          <ContentField content={campaignDraft.selectedContent || []} />
+          <ExperimentField experiment={campaignDraft.selectedExperiment} />
+        </div>
       </div>
     </div>
   );

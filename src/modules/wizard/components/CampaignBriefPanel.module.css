@@ -264,3 +264,146 @@
     border-top: 1px solid #e0e7ff;
   }
 }
+
+/* Selected Items Section */
+.selectedSection {
+  margin-top: 8px;
+}
+
+.sectionDivider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.sectionDivider::before,
+.sectionDivider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #e2e8f0;
+}
+
+.sectionLabel {
+  font-size: 10px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+/* Assets List */
+.assetsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.assetItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px 6px 6px;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+}
+
+.assetThumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  object-fit: cover;
+  background: #e2e8f0;
+}
+
+.assetName {
+  font-size: 12px;
+  font-weight: 500;
+  color: #0369a1;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Content List */
+.contentList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.contentItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  background: #faf5ff;
+  border: 1px solid #e9d5ff;
+  border-radius: 8px;
+}
+
+.contentThumb {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  object-fit: cover;
+  background: #e2e8f0;
+  flex-shrink: 0;
+}
+
+.contentInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.contentTitle {
+  font-size: 12px;
+  font-weight: 500;
+  color: #7c3aed;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.contentType {
+  font-size: 10px;
+  color: #a78bfa;
+}
+
+/* Experiment Details */
+.experimentDetails {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.experimentTitle {
+  font-size: 12px;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.experimentType {
+  font-size: 10px;
+  font-weight: 500;
+  padding: 3px 8px;
+  background: #fef3c7;
+  color: #d97706;
+  border-radius: 10px;
+}
+
+.experimentLift {
+  font-size: 11px;
+  color: #059669;
+  font-weight: 500;
+}

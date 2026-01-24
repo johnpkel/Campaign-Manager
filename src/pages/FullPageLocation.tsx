@@ -9,6 +9,9 @@ import { WizardProvider, CampaignWizard } from '../modules/wizard';
 import { Campaign, CampaignFormData } from '../types';
 import styles from './FullPageLocation.module.css';
 
+// Stack API key for Contentstack URL generation
+const STACK_API_KEY = 'blte94096625af38792';
+
 type CampaignView = 'list' | 'detail' | 'create' | 'edit';
 
 interface CampaignModuleProps {
@@ -193,6 +196,7 @@ function CollaborationModule() {
 
 export function FullPageLocation() {
   const { activeModule, isModuleExpanded } = useExperience();
+  const { addCampaign, refreshCampaigns } = useCampaigns();
   const [isWizardActive, setIsWizardActive] = useState(false);
 
   const handleWizardOpen = useCallback(() => {
@@ -201,7 +205,15 @@ export function FullPageLocation() {
 
   const handleWizardClose = useCallback(() => {
     setIsWizardActive(false);
-  }, []);
+    // Refresh campaigns list to show the newly created campaign
+    refreshCampaigns();
+  }, [refreshCampaigns]);
+
+  // Callback for wizard to create campaigns
+  const handleWizardCampaignCreate = useCallback(async (data: CampaignFormData): Promise<Campaign> => {
+    const campaign = await addCampaign(data);
+    return campaign;
+  }, [addCampaign]);
 
   // Show dashboard when no module is expanded
   if (!isModuleExpanded || !activeModule) {
@@ -213,7 +225,11 @@ export function FullPageLocation() {
     return (
       <div className={styles.wizardFullScreen}>
         <AIProvider>
-          <WizardProvider onExit={handleWizardClose}>
+          <WizardProvider
+            onExit={handleWizardClose}
+            onCampaignCreate={handleWizardCampaignCreate}
+            stackApiKey={STACK_API_KEY}
+          >
             <CampaignWizard onComplete={handleWizardClose} onCancel={handleWizardClose} />
           </WizardProvider>
         </AIProvider>

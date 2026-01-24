@@ -101,7 +101,8 @@ export class ContentstackCampaignService implements ICampaignService {
 
     if (!response.ok) {
       const error = await response.json().catch(() => ({}));
-      throw new Error(error.error_message || `API request failed: ${response.status}`);
+      console.error('API Error Response:', JSON.stringify(error, null, 2));
+      throw new Error(error.error_message || error.message || `API request failed: ${response.status}`);
     }
 
     return response.json();
@@ -129,13 +130,17 @@ export class ContentstackCampaignService implements ICampaignService {
 
   async createCampaign(data: CampaignFormData): Promise<Campaign> {
     try {
+      const entryData = this.mapFormDataToEntry(data);
+      console.log('Creating campaign with data:', JSON.stringify(entryData, null, 2));
+
       const result = await this.request(`/content_types/${CONTENT_TYPE_UID}/entries`, {
         method: 'POST',
-        body: JSON.stringify({ entry: this.mapFormDataToEntry(data) }),
+        body: JSON.stringify({ entry: entryData }),
       });
       return this.mapEntryToCampaign(result.entry);
     } catch (error) {
       console.error('Failed to create campaign:', error);
+      console.error('Form data was:', JSON.stringify(data, null, 2));
       throw error;
     }
   }
@@ -198,23 +203,28 @@ export class ContentstackCampaignService implements ICampaignService {
   }
 
   private mapFormDataToEntry(data: CampaignFormData): Record<string, unknown> {
-    return {
+    // Build entry object, only including fields that have values
+    const entry: Record<string, unknown> = {
       title: data.title,
-      key_messages: data.key_messages,
-      campaign_goals: data.campaign_goals,
       start_date: data.start_date,
       end_date: data.end_date,
-      contributors: data.contributors,
-      budget: data.budget,
       status: data.status,
       channels: data.channels,
-      assets: data.assets,
-      timeline: data.timeline,
-      market_research: data.market_research,
-      utms: data.utms,
-      activity_timeline: data.activity_timeline,
-      success_indicators: data.success_indicators,
     };
+
+    // Add optional fields only if they have values
+    if (data.key_messages) entry.key_messages = data.key_messages;
+    if (data.campaign_goals) entry.campaign_goals = data.campaign_goals;
+    if (data.contributors && data.contributors.length > 0) entry.contributors = data.contributors;
+    if (data.budget) entry.budget = data.budget;
+    if (data.assets && data.assets.length > 0) entry.assets = data.assets;
+    if (data.timeline && data.timeline.length > 0) entry.timeline = data.timeline;
+    if (data.market_research) entry.market_research = data.market_research;
+    if (data.utms && data.utms.length > 0) entry.utms = data.utms;
+    if (data.activity_timeline && data.activity_timeline.length > 0) entry.activity_timeline = data.activity_timeline;
+    if (data.success_indicators && data.success_indicators.length > 0) entry.success_indicators = data.success_indicators;
+
+    return entry;
   }
 }
 

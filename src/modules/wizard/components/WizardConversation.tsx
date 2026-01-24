@@ -36,10 +36,6 @@ const PROGRESS_STEPS = [
   'experimentation',
 ];
 
-interface WizardConversationProps {
-  onExit: () => void;
-}
-
 // Helper to format relative time
 function formatRelativeTime(dateString: string): string {
   const date = new Date(dateString);
@@ -55,7 +51,12 @@ function formatRelativeTime(dateString: string): string {
   return date.toLocaleDateString();
 }
 
-export function WizardConversation({ onExit }: WizardConversationProps) {
+interface WizardConversationProps {
+  onExit: () => void;
+  onCampaignCreated?: () => void;
+}
+
+export function WizardConversation({ onExit, onCampaignCreated }: WizardConversationProps) {
   const {
     messages,
     sendMessage,
@@ -66,6 +67,10 @@ export function WizardConversation({ onExit }: WizardConversationProps) {
     startNewCampaign,
     resumeChat,
     backToChatHistory,
+    createdCampaign,
+    isFinalizingCampaign,
+    finalizeCampaign,
+    campaignDraft,
   } = useWizard();
   const [inputValue, setInputValue] = useState('');
   const [isSending, setIsSending] = useState(false);
@@ -100,6 +105,20 @@ export function WizardConversation({ onExit }: WizardConversationProps) {
       setIsSending(false);
     }
   };
+
+  // Handle campaign creation confirmation
+  const handleConfirmCreate = async () => {
+    const result = await finalizeCampaign();
+    if (result && onCampaignCreated) {
+      // Small delay to show success message before navigating
+      setTimeout(() => {
+        onCampaignCreated();
+      }, 2000);
+    }
+  };
+
+  // Check if we're at the confirmation step (complete but not yet created)
+  const showConfirmation = currentStep === 'complete' && !createdCampaign && !isFinalizingCampaign;
 
   // Calculate progress percentage
   const currentStepIndex = PROGRESS_STEPS.indexOf(currentStep);
@@ -252,6 +271,68 @@ export function WizardConversation({ onExit }: WizardConversationProps) {
             <span></span>
             <span></span>
             <span></span>
+          </div>
+        )}
+
+        {/* Confirmation Card - shown when ready to create */}
+        {showConfirmation && (
+          <div className={styles.confirmationCard}>
+            <div className={styles.confirmationIcon}>✨</div>
+            <div className={styles.confirmationContent}>
+              <h4 className={styles.confirmationTitle}>Ready to Create Your Campaign</h4>
+              <p className={styles.confirmationMessage}>
+                <strong>{campaignDraft.title || 'Your campaign'}</strong> is ready to be created.
+                This will add it to your active campaigns in Contentstack.
+              </p>
+              <div className={styles.confirmationSummary}>
+                {campaignDraft.channels && campaignDraft.channels.length > 0 && (
+                  <span className={styles.summaryItem}>
+                    📢 {campaignDraft.channels.join(', ')}
+                  </span>
+                )}
+                {campaignDraft.budget && (
+                  <span className={styles.summaryItem}>
+                    💰 {campaignDraft.budget}
+                  </span>
+                )}
+              </div>
+              <button
+                className={styles.confirmButton}
+                onClick={handleConfirmCreate}
+              >
+                Create Campaign
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Creating Campaign Indicator */}
+        {isFinalizingCampaign && !createdCampaign && (
+          <div className={styles.creatingBanner}>
+            <div className={styles.creatingSpinner} />
+            <span>Creating your campaign in Contentstack...</span>
+          </div>
+        )}
+
+        {/* Campaign Created Success Message */}
+        {createdCampaign && (
+          <div className={styles.successBanner}>
+            <div className={styles.successIcon}>🎉</div>
+            <div className={styles.successContent}>
+              <h4 className={styles.successTitle}>Campaign Created!</h4>
+              <p className={styles.successMessage}>
+                <strong>{createdCampaign.title}</strong> has been added to your active campaigns.
+              </p>
+              <p className={styles.successRedirect}>Redirecting to campaigns list...</p>
+              <a
+                href={createdCampaign.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.successLink}
+              >
+                View in Contentstack →
+              </a>
+            </div>
           </div>
         )}
       </div>

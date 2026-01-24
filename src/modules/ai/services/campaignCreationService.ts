@@ -159,41 +159,51 @@ export async function generateCampaignRecommendations(
 
   const hasAudienceExplorer = audienceService.isAvailable();
 
-  let message = `I've analyzed your data and have some campaign recommendations for you!\n\n`;
+  let message = `**What would you like to explore?**\n\n`;
+  message += `Based on your recent data and trends, here are some campaign ideas to consider:\n\n`;
 
   // Group recommendations by type
   const performanceBased = recommendations.filter(r => r.type === 'performance-based');
   const audienceBased = recommendations.filter(r => r.type === 'audience-insight');
   const trendBased = recommendations.filter(r => r.type === 'trend-based');
 
+  let recNum = 1;
+
   if (performanceBased.length > 0) {
-    message += `**Based on Your Campaign Performance:**\n`;
-    performanceBased.forEach((rec, i) => {
-      message += `${i + 1}. **${rec.title}** - ${rec.description}\n`;
+    message += `**📊 Based on Your Performance Data:**\n`;
+    performanceBased.forEach((rec) => {
+      message += `${recNum}. **${rec.title}**\n`;
+      message += `   ${rec.description}\n`;
       message += `   _${rec.rationale}_\n\n`;
+      recNum++;
     });
   }
 
   if (audienceBased.length > 0 && hasAudienceExplorer) {
-    message += `**From Audience Insight Explorer:**\n`;
-    audienceBased.forEach((rec, i) => {
-      message += `${performanceBased.length + i + 1}. **${rec.title}** - ${rec.description}\n`;
+    message += `**👥 Audience Opportunities:**\n`;
+    audienceBased.forEach((rec) => {
+      message += `${recNum}. **${rec.title}**\n`;
+      message += `   ${rec.description}\n`;
       message += `   _${rec.rationale}_\n\n`;
+      recNum++;
     });
   }
 
   if (trendBased.length > 0) {
-    message += `**Based on Industry Trends:**\n`;
-    trendBased.forEach((rec, i) => {
-      const num = performanceBased.length + audienceBased.length + i + 1;
-      message += `${num}. **${rec.title}** - ${rec.description}\n`;
+    message += `**📈 Trending Ideas:**\n`;
+    trendBased.forEach((rec) => {
+      message += `${recNum}. **${rec.title}**\n`;
+      message += `   ${rec.description}\n`;
       if (rec.sourceData?.newsSource) {
         message += `   _Source: ${rec.sourceData.newsSource}_\n\n`;
+      } else {
+        message += `\n`;
       }
+      recNum++;
     });
   }
 
-  message += `\nSelect one of these recommendations or tell me your own campaign idea, and I'll guide you through creating it step by step.`;
+  message += `Select one of these ideas to get started, or tell me about a different campaign you have in mind.`;
 
   return { recommendations, message };
 }

@@ -10,27 +10,23 @@ interface CampaignWizardProps {
 }
 
 export function CampaignWizard({ onComplete, onCancel }: CampaignWizardProps) {
-  const { isInsightsPanelCollapsed, exitWizard, currentStep } = useWizard();
+  const { isInsightsPanelCollapsed, exitWizard } = useWizard();
 
   const handleExit = () => {
     exitWizard();
     onCancel?.();
   };
 
-  const handleComplete = () => {
+  // Called after campaign is created and user should be redirected
+  const handleCampaignCreated = () => {
     onComplete?.();
   };
-
-  // Check if wizard is complete
-  if (currentStep === 'complete') {
-    handleComplete();
-  }
 
   return (
     <div className={styles.wizardContainer}>
       {/* Left Panel - AI Conversation (25%) */}
       <div className={styles.conversationPanel}>
-        <WizardConversation onExit={handleExit} />
+        <WizardConversation onExit={handleExit} onCampaignCreated={handleCampaignCreated} />
       </div>
 
       {/* Center Panel - Campaign Brief with Scorecard (50%) */}
